@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack)",
+      "Bash(cmd.exe /c \"where bun\")",
+      "Bash(cmd.exe /c \"where pnpm\")",
+      "Bash(cmd.exe /c \"node --version\")",
+      "Bash(cmd.exe /c \"npm --version\")",
+      "Bash(cmd.exe /c \"winget --version\")",
+      "Bash(cmd.exe /c \"winget search nodejs\")",
+      "Bash(ANTIGRAVITY=\"/c/Users/mause/AppData/Local/Programs/Antigravity/bin/antigravity\")",
+      "Bash(\"$ANTIGRAVITY\" node --version)",
+      "Bash(\"$ANTIGRAVITY\" npm --version)",
+      "Bash(\"$ANTIGRAVITY\" npx --version)",
+      "Bash(\"$ANTIGRAVITY\" --help)",
+      "Bash(\"/c/Users/mause/AppData/Local/Microsoft/WindowsApps/winget.exe\" --version)",
+      "Bash(\"/c/Users/mause/AppData/Local/Microsoft/WindowsApps/winget.exe\" install OpenJS.NodeJS.LTS --accept-package-agreements --accept-source-agreements)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
+      "Bash(node --version)",
+      "Bash(npx --version)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack --yes)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls /d/colordeldolar/node_modules/.bin/next*)",
+      "Bash(gh --version)",
+      "Bash(\"/c/Users/mause/AppData/Local/Microsoft/WindowsApps/winget.exe\" install GitHub.cli --accept-package-agreements --accept-source-agreements)",
+      "Bash(\"/c/Users/mause/AppData/Local/Programs/GitHub CLI/gh.exe\" auth status)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" auth status)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo create colordeldolar --public --source=. --remote=origin)"
+    ]
+  }
+}
