@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import DolarValue from '@/components/dolar-value'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
 import styles from './page.module.scss'
@@ -22,8 +22,9 @@ export default function Home() {
   const [cargando, setCargando] = useState(true)
   const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const iniciarPollingRef = useRef<() => void>()
 
-  async function fetchDolar() {
+  const fetchDolar = useCallback(async () => {
     try {
       const res = await fetch('/api/dolar')
       const json = await res.json()
@@ -34,14 +35,14 @@ export default function Home() {
     } finally {
       setCargando(false)
     }
-  }
+  }, [])
 
-  function limpiarTimers() {
+  const limpiarTimers = useCallback(() => {
     if (intervaloRef.current) clearInterval(intervaloRef.current)
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-  }
+  }, [])
 
-  function iniciarPolling() {
+  const iniciarPolling = useCallback(() => {
     limpiarTimers()
     const abierto = esMercadoAbierto()
     setMercadoAbierto(abierto)
@@ -49,21 +50,25 @@ export default function Home() {
     if (abierto) {
       intervaloRef.current = setInterval(() => {
         fetchDolar()
-        if (!esMercadoAbierto()) iniciarPolling()
+        if (!esMercadoAbierto()) iniciarPollingRef.current?.()
       }, 60_000)
     } else {
       timeoutRef.current = setTimeout(() => {
         fetchDolar()
-        iniciarPolling()
+        iniciarPollingRef.current?.()
       }, msHastaProximaApertura())
     }
-  }
+  }, [fetchDolar, limpiarTimers])
+
+  useEffect(() => {
+    iniciarPollingRef.current = iniciarPolling
+  })
 
   useEffect(() => {
     fetchDolar()
     iniciarPolling()
-    return () => limpiarTimers()
-  }, [])
+    return limpiarTimers
+  }, [fetchDolar, iniciarPolling, limpiarTimers])
 
   const dotActive = FORCE_POLLING || mercadoAbierto
 
