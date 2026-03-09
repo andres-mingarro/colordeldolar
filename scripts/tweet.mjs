@@ -10,7 +10,7 @@ const ROOT = resolve(__dirname, '..')
 dotenv.config({ path: resolve(ROOT, '.env.local') })
 
 // 🔇 Cambiar a true para deshabilitar el envío de tweets
-const TWEETS_DESACTIVADOS = false
+const TWEETS_DESACTIVADOS = true
 
 const APERTURA_FILE = resolve(ROOT, 'data', 'apertura.json')
 
