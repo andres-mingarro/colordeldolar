@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import DolarValue from '@/components/dolar-value'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
+import styles from './page.module.scss'
 
 interface DolarData {
   compra: number
@@ -46,14 +47,11 @@ export default function Home() {
     setMercadoAbierto(abierto)
 
     if (abierto) {
-      // Mercado abierto → polling cada 1 minuto
       intervaloRef.current = setInterval(() => {
         fetchDolar()
-        // Chequear si el mercado cerró
         if (!esMercadoAbierto()) iniciarPolling()
       }, 60_000)
     } else {
-      // Mercado cerrado → esperar hasta la próxima apertura
       timeoutRef.current = setTimeout(() => {
         fetchDolar()
         iniciarPolling()
@@ -67,16 +65,16 @@ export default function Home() {
     return () => limpiarTimers()
   }, [])
 
+  const dotActive = FORCE_POLLING || mercadoAbierto
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 gap-10 px-4">
-      <h1 className="text-2xl font-bold tracking-tight text-white">
-        💵 Color del Dólar
-      </h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>💵 Color del Dólar</h1>
 
       {cargando ? (
-        <p className="text-zinc-400 text-lg animate-pulse">Cargando valores...</p>
+        <p className={styles.loading}>Cargando valores...</p>
       ) : data ? (
-        <div className="flex flex-col items-center gap-6 sm:flex-row">
+        <div className={styles.cardsWrapper}>
           <DolarValue
             titulo="Dólar Blue"
             compra={data.blue.compra}
@@ -91,13 +89,13 @@ export default function Home() {
           />
         </div>
       ) : (
-        <p className="text-red-400">Error al cargar los valores.</p>
+        <p className={styles.error}>Error al cargar los valores.</p>
       )}
 
-      <div className="flex flex-col items-center gap-1">
-        <div className="flex items-center gap-2">
-          <span className={`h-2 w-2 rounded-full ${FORCE_POLLING || mercadoAbierto ? 'bg-green-400 animate-pulse' : 'bg-zinc-600'}`} />
-          <span className="text-xs text-zinc-500">
+      <div className={styles.status}>
+        <div className={styles.statusRow}>
+          <span className={`${styles.statusDot} ${dotActive ? styles.statusDotActive : ''}`} />
+          <span className={styles.statusText}>
             {FORCE_POLLING
               ? 'Polling forzado 24/7 (desarrollo)'
               : mercadoAbierto
@@ -106,7 +104,7 @@ export default function Home() {
           </span>
         </div>
         {ultimaActualizacion && (
-          <p className="text-xs text-zinc-600">Última actualización: {ultimaActualizacion}</p>
+          <p className={styles.lastUpdate}>Última actualización: {ultimaActualizacion}</p>
         )}
       </div>
     </div>

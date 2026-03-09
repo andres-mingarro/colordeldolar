@@ -1,0 +1,71 @@
+@use 'sass:map';
+@use '../styles/variables' as *;
+
+// ─── Card base ────────────────────────────────────────────────────────────────
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 1rem;
+  padding: 2.5rem 3.5rem;
+  border: 1px solid var(--variant-border);
+  background: var(--variant-bg);
+}
+
+// ─── Label (título del tipo de dólar) ────────────────────────────────────────
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--variant-label);
+}
+
+// ─── Valores compra / venta ───────────────────────────────────────────────────
+
+.values {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.valueGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.valueLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-zinc-500;
+}
+
+.compra,
+.venta {
+  font-size: 3.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.compra { color: var(--variant-compra); }
+.venta  { color: var(--variant-venta);  }
+
+// ─── Variantes de color ───────────────────────────────────────────────────────
+// Cada variante sólo sobreescribe las custom properties; el resto de estilos
+// los hereda del bloque .card anterior.
+
+@each $name, $colors in $variants {
+  .variant-#{$name} {
+    --variant-bg:     #{map.get($colors, bg)};
+    --variant-border: #{map.get($colors, border)};
+    --variant-label:  #{map.get($colors, label)};
+    --variant-compra: #{map.get($colors, compra)};
+    --variant-venta:  #{map.get($colors, venta)};
+  }
+}
