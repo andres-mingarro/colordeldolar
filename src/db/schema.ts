@@ -1,18 +1,20 @@
-import { pgTable, serial, varchar, numeric, timestamp, index } from 'drizzle-orm/pg-core'
+import { pgTable, serial, varchar, numeric, date, uniqueIndex } from 'drizzle-orm/pg-core'
 
-export const cotizaciones = pgTable(
-  'cotizaciones',
+export const cotizacionesDiarias = pgTable(
+  'cotizaciones_diarias',
   {
-    id:        serial('id').primaryKey(),
-    tipo:      varchar('tipo', { length: 50 }).notNull(),   // 'blue' | 'oficial'
-    compra:    numeric('compra', { precision: 10, scale: 2 }).notNull(),
-    venta:     numeric('venta',  { precision: 10, scale: 2 }).notNull(),
-    timestamp: timestamp('timestamp', { withTimezone: true }).defaultNow().notNull(),
+    id:             serial('id').primaryKey(),
+    tipo:           varchar('tipo', { length: 50 }).notNull(),      // 'blue' | 'oficial'
+    fecha:          date('fecha').notNull(),                         // YYYY-MM-DD (hora AR)
+    aperturaCompra: numeric('apertura_compra', { precision: 10, scale: 2 }).notNull(),
+    aperturaVenta:  numeric('apertura_venta',  { precision: 10, scale: 2 }).notNull(),
+    cierreCompra:   numeric('cierre_compra',   { precision: 10, scale: 2 }).notNull(),
+    cierreVenta:    numeric('cierre_venta',    { precision: 10, scale: 2 }).notNull(),
   },
   (t) => [
-    index('idx_cotizaciones_tipo_timestamp').on(t.tipo, t.timestamp),
+    uniqueIndex('uniq_tipo_fecha').on(t.tipo, t.fecha),
   ]
 )
 
-export type Cotizacion = typeof cotizaciones.$inferSelect
-export type NuevaCotizacion = typeof cotizaciones.$inferInsert
+export type CotizacionDiaria    = typeof cotizacionesDiarias.$inferSelect
+export type NuevaCotizacion     = typeof cotizacionesDiarias.$inferInsert
