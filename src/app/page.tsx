@@ -22,7 +22,7 @@ export default function Home() {
   const [cargando, setCargando] = useState(true)
   const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const iniciarPollingRef = useRef<() => void>()
+  const iniciarPollingRef = useRef<(() => void) | undefined>(undefined)
 
   const fetchDolar = useCallback(async () => {
     try {
