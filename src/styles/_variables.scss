@@ -20,42 +20,42 @@ $bg-zinc-600:   #52525b;
 // ─── Color variants ───────────────────────────────────────────────────────────
 
 $variants: (
-  green: (
+  "green": (
     bg:     rgba(34, 197, 94, 0.1),
     border: rgba(34, 197, 94, 0.3),
     label:  #4ade80,
     compra: #4ade80,
     venta:  #86efac,
   ),
-  blue: (
+  "blue": (
     bg:     rgba(59, 130, 246, 0.1),
     border: rgba(59, 130, 246, 0.3),
     label:  #60a5fa,
     compra: #60a5fa,
     venta:  #93c5fd,
   ),
-  yellow: (
+  "yellow": (
     bg:     rgba(234, 179, 8, 0.1),
     border: rgba(234, 179, 8, 0.3),
     label:  #facc15,
     compra: #facc15,
     venta:  #fde047,
   ),
-  red: (
+  "red": (
     bg:     rgba(239, 68, 68, 0.1),
     border: rgba(239, 68, 68, 0.3),
     label:  #f87171,
     compra: #f87171,
     venta:  #fca5a5,
   ),
-  purple: (
+  "purple": (
     bg:     rgba(168, 85, 247, 0.1),
     border: rgba(168, 85, 247, 0.3),
     label:  #c084fc,
     compra: #c084fc,
     venta:  #d8b4fe,
   ),
-  neutral: (
+  "neutral": (
     bg:     rgba(255, 255, 255, 0.05),
     border: rgba(255, 255, 255, 0.1),
     label:  #a1a1aa,
