@@ -8,6 +8,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '..')
 
 dotenv.config({ path: resolve(ROOT, '.env.local') })
+
+// 🔇 Cambiar a true para deshabilitar el envío de tweets
+const TWEETS_DESACTIVADOS = false
+
 const APERTURA_FILE = resolve(ROOT, 'data', 'apertura.json')
 
 const client = new TwitterApi({
@@ -55,8 +59,12 @@ async function tweetApertura() {
    Compra: ${formatPrecio(oficial.compra)}
    Venta:  ${formatPrecio(oficial.venta)}
 
-⏰ ${new Date().toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })} | colordeldolar.vercel.app`
+⏰ ${new Date().toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}`
 
+  if (TWEETS_DESACTIVADOS) {
+    console.log('Tweets desactivados. Texto que se hubiera enviado:\n', texto)
+    return
+  }
   await client.v2.tweet(texto)
   console.log('Tweet de apertura enviado ✓')
 }
@@ -86,8 +94,12 @@ async function tweetCierre() {
    Compra: ${formatPrecio(oficial.compra)}
    Venta:  ${formatPrecio(oficial.venta)}${diffOficial}
 
-⏰ ${new Date().toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })} | colordeldolar.vercel.app`
+⏰ ${new Date().toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}`
 
+  if (TWEETS_DESACTIVADOS) {
+    console.log('Tweets desactivados. Texto que se hubiera enviado:\n', texto)
+    return
+  }
   await client.v2.tweet(texto)
   console.log('Tweet de cierre enviado ✓')
 }
