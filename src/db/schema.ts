@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, numeric, date, uniqueIndex } from 'drizzle-orm/pg-core'
+import { pgTable, serial, varchar, numeric, date, text, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const cotizacionesDiarias = pgTable(
   'cotizaciones_diarias',
@@ -16,5 +16,12 @@ export const cotizacionesDiarias = pgTable(
   ]
 )
 
-export type CotizacionDiaria    = typeof cotizacionesDiarias.$inferSelect
-export type NuevaCotizacion     = typeof cotizacionesDiarias.$inferInsert
+export type CotizacionDiaria = typeof cotizacionesDiarias.$inferSelect
+export type NuevaCotizacion  = typeof cotizacionesDiarias.$inferInsert
+
+// ─── Configuración global ─────────────────────────────────────────────────────
+
+export const configuracion = pgTable('configuracion', {
+  clave: varchar('clave', { length: 100 }).primaryKey(),
+  valor: text('valor').notNull(),
+})

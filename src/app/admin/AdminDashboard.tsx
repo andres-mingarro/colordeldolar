@@ -1,0 +1,131 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import type { CotizacionDiaria } from '@/db/schema'
+import styles from './page.module.scss'
+
+interface Props {
+  cotizaciones: CotizacionDiaria[]
+  pollingActivo: boolean
+  pollingIntervalo: number
+}
+
+function variacion(apertura: string, cierre: string) {
+  const a = Number(apertura)
+  const c = Number(cierre)
+  if (a === c) return null
+  const diff = c - a
+  const pct = ((diff / a) * 100).toFixed(2)
+  const signo = diff > 0 ? '+' : ''
+  return { diff, label: `${signo}$${diff.toLocaleString('es-AR')} (${signo}${pct}%)`, positivo: diff > 0 }
+}
+
+export default function AdminDashboard({ cotizaciones, pollingActivo, pollingIntervalo }: Props) {
+  const router = useRouter()
+  const [activo, setActivo] = useState(pollingActivo)
+  const [intervalo, setIntervalo] = useState(pollingIntervalo)
+  const [guardando, setGuardando] = useState(false)
+  const [guardado, setGuardado] = useState(false)
+
+  async function guardarConfig(e: React.FormEvent) {
+    e.preventDefault()
+    setGuardando(true)
+    setGuardado(false)
+    await fetch('/api/admin/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ polling_activo: activo, polling_intervalo: intervalo }),
+    })
+    setGuardando(false)
+    setGuardado(true)
+    setTimeout(() => setGuardado(false), 2000)
+  }
+
+  async function logout() {
+    await fetch('/api/admin/logout', { method: 'POST' })
+    router.push('/admin/login')
+  }
+
+  return (
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Panel Admin</h1>
+        <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
+      </header>
+
+      {/* ── Configuración de polling ── */}
+      <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Configuración de polling</h2>
+        <form onSubmit={guardarConfig} className={styles.configForm}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              checked={activo}
+              onChange={e => setActivo(e.target.checked)}
+              className={styles.checkbox}
+            />
+            Polling activo
+          </label>
+
+          <label className={styles.fieldLabel}>
+            Intervalo (minutos)
+            <input
+              type="number"
+              min={1}
+              max={60}
+              value={intervalo}
+              disabled={!activo}
+              onChange={e => setIntervalo(Number(e.target.value))}
+              className={styles.numberInput}
+            />
+          </label>
+
+          <button type="submit" disabled={guardando} className={styles.saveBtn}>
+            {guardando ? 'Guardando…' : guardado ? '✓ Guardado' : 'Guardar'}
+          </button>
+        </form>
+      </section>
+
+      {/* ── Cotizaciones de hoy ── */}
+      <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Cotizaciones de hoy</h2>
+        {cotizaciones.length === 0 ? (
+          <p className={styles.emptyMsg}>Sin datos por hoy.</p>
+        ) : (
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Apertura compra</th>
+                  <th>Apertura venta</th>
+                  <th>Cierre compra</th>
+                  <th>Cierre venta</th>
+                  <th>Variación venta</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cotizaciones.map(c => {
+                  const v = variacion(c.aperturaVenta, c.cierreVenta)
+                  return (
+                    <tr key={c.tipo}>
+                      <td className={styles.tipoBadge}>{c.tipo}</td>
+                      <td>${Number(c.aperturaCompra).toLocaleString('es-AR')}</td>
+                      <td>${Number(c.aperturaVenta).toLocaleString('es-AR')}</td>
+                      <td>${Number(c.cierreCompra).toLocaleString('es-AR')}</td>
+                      <td>${Number(c.cierreVenta).toLocaleString('es-AR')}</td>
+                      <td className={v ? (v.positivo ? styles.varPos : styles.varNeg) : styles.varNeutral}>
+                        {v ? v.label : '—'}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </div>
+  )
+}

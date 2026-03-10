@@ -20,6 +20,10 @@ export default function Home() {
   const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
   const [mercadoAbierto, setMercadoAbierto] = useState(false)
   const [cargando, setCargando] = useState(true)
+  const [pollingActivo, setPollingActivo] = useState(true)
+  const [pollingIntervaloMs, setPollingIntervaloMs] = useState(60_000)
+  const [configCargada, setConfigCargada] = useState(false)
+
   const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const iniciarPollingRef = useRef<(() => void) | undefined>(undefined)
@@ -44,21 +48,23 @@ export default function Home() {
 
   const iniciarPolling = useCallback(() => {
     limpiarTimers()
+    if (!pollingActivo && !FORCE_POLLING) return
+
     const abierto = esMercadoAbierto()
     setMercadoAbierto(abierto)
 
-    if (abierto) {
+    if (abierto || FORCE_POLLING) {
       intervaloRef.current = setInterval(() => {
         fetchDolar()
-        if (!esMercadoAbierto()) iniciarPollingRef.current?.()
-      }, 60_000)
+        if (!esMercadoAbierto() && !FORCE_POLLING) iniciarPollingRef.current?.()
+      }, pollingIntervaloMs)
     } else {
       timeoutRef.current = setTimeout(() => {
         fetchDolar()
         iniciarPollingRef.current?.()
       }, msHastaProximaApertura())
     }
-  }, [fetchDolar, limpiarTimers])
+  }, [fetchDolar, limpiarTimers, pollingActivo, pollingIntervaloMs])
 
   useEffect(() => {
     iniciarPollingRef.current = iniciarPolling
@@ -66,11 +72,23 @@ export default function Home() {
 
   useEffect(() => {
     fetchDolar()
+    fetch('/api/config')
+      .then(r => r.json())
+      .then(cfg => {
+        setPollingActivo(cfg.polling_activo)
+        setPollingIntervaloMs(cfg.polling_intervalo * 60_000)
+      })
+      .catch(() => {})
+      .finally(() => setConfigCargada(true))
+  }, [fetchDolar])
+
+  useEffect(() => {
+    if (!configCargada) return
     iniciarPolling()
     return limpiarTimers
-  }, [fetchDolar, iniciarPolling, limpiarTimers])
+  }, [configCargada, iniciarPolling, limpiarTimers])
 
-  const dotActive = FORCE_POLLING || mercadoAbierto
+  const dotActive = FORCE_POLLING || (pollingActivo && mercadoAbierto)
 
   return (
     <div className={styles.container}>
@@ -103,8 +121,10 @@ export default function Home() {
           <span className={styles.statusText}>
             {FORCE_POLLING
               ? 'Polling forzado 24/7 (desarrollo)'
+              : !pollingActivo
+              ? 'Polling desactivado'
               : mercadoAbierto
-              ? 'Mercado abierto · actualizando cada 1 minuto'
+              ? `Mercado abierto · actualizando cada ${pollingIntervaloMs / 60_000} min`
               : 'Mercado cerrado · sin actualización automática'}
           </span>
         </div>

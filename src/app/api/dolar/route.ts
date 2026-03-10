@@ -3,12 +3,7 @@ import { sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { cotizacionesDiarias } from '@/db/schema'
 
-// Fecha de hoy en zona horaria de Argentina (UTC-3, sin DST)
-function fechaHoyAR(): string {
-  const now = new Date()
-  const ar = new Date(now.getTime() - 3 * 60 * 60 * 1000)
-  return ar.toISOString().split('T')[0]
-}
+import { fechaHoyAR } from '@/lib/fecha'
 
 export async function GET() {
   const [blueRes, oficialRes] = await Promise.all([

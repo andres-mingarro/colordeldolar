@@ -1,0 +1,171 @@
+@use '../../styles/variables' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $text-white;
+}
+
+.logoutBtn {
+  font-size: 0.8rem;
+  color: $text-zinc-400;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: $text-white;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cardTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $text-zinc-400;
+}
+
+// ─── Config form ──────────────────────────────────────────────────────────────
+
+.configForm {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: $text-white;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  accent-color: $bg-green-400;
+  cursor: pointer;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.9rem;
+  color: $text-white;
+}
+
+.numberInput {
+  width: 5rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.5rem;
+  color: $text-white;
+  font-size: 0.9rem;
+  text-align: center;
+  outline: none;
+
+  &:focus { border-color: rgba(255, 255, 255, 0.3); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.saveBtn {
+  background: $text-white;
+  color: $color-bg;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ─── Tabla ────────────────────────────────────────────────────────────────────
+
+.emptyMsg {
+  font-size: 0.875rem;
+  color: $text-zinc-500;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $text-zinc-500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  td {
+    padding: 0.625rem 0.75rem;
+    color: $text-zinc-200;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+.tipoBadge {
+  font-weight: 600;
+  text-transform: capitalize;
+  color: $text-white !important;
+}
+
+.varPos    { color: #4ade80 !important; font-weight: 600; }
+.varNeg    { color: #f87171 !important; font-weight: 600; }
+.varNeutral { color: $text-zinc-500 !important; }
