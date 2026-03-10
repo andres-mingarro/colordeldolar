@@ -169,3 +169,56 @@
 .varPos    { color: #4ade80 !important; font-weight: 600; }
 .varNeg    { color: #f87171 !important; font-weight: 600; }
 .varNeutral { color: $text-zinc-500 !important; }
+
+// ── Opciones de X ──────────────────────────────────────
+
+.xHint {
+  font-size: 0.75rem;
+  color: $text-zinc-500;
+  margin-bottom: 1rem;
+
+  code {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+    font-family: monospace;
+    color: $text-zinc-200;
+    margin-right: 0.25rem;
+  }
+}
+
+.xForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.xBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.625rem 0.75rem;
+  color: $text-white;
+  font-family: monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}

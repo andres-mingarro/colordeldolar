@@ -9,6 +9,10 @@ interface Props {
   cotizaciones: CotizacionDiaria[]
   pollingActivo: boolean
   pollingIntervalo: number
+  xPostApertura: boolean
+  xMsgApertura: string
+  xPostCierre: boolean
+  xMsgCierre: string
 }
 
 function variacion(apertura: string, cierre: string) {
@@ -21,25 +25,60 @@ function variacion(apertura: string, cierre: string) {
   return { diff, label: `${signo}$${diff.toLocaleString('es-AR')} (${signo}${pct}%)`, positivo: diff > 0 }
 }
 
-export default function AdminDashboard({ cotizaciones, pollingActivo, pollingIntervalo }: Props) {
+export default function AdminDashboard({
+  cotizaciones,
+  pollingActivo,
+  pollingIntervalo,
+  xPostApertura,
+  xMsgApertura,
+  xPostCierre,
+  xMsgCierre,
+}: Props) {
   const router = useRouter()
+
   const [activo, setActivo] = useState(pollingActivo)
   const [intervalo, setIntervalo] = useState(pollingIntervalo)
-  const [guardando, setGuardando] = useState(false)
-  const [guardado, setGuardado] = useState(false)
+  const [guardandoPolling, setGuardandoPolling] = useState(false)
+  const [guardadoPolling, setGuardadoPolling] = useState(false)
 
-  async function guardarConfig(e: React.FormEvent) {
+  const [xApertura, setXApertura] = useState(xPostApertura)
+  const [msgApertura, setMsgApertura] = useState(xMsgApertura)
+  const [xCierre, setXCierre] = useState(xPostCierre)
+  const [msgCierre, setMsgCierre] = useState(xMsgCierre)
+  const [guardandoX, setGuardandoX] = useState(false)
+  const [guardadoX, setGuardadoX] = useState(false)
+
+  async function guardarPolling(e: { preventDefault(): void }) {
     e.preventDefault()
-    setGuardando(true)
-    setGuardado(false)
+    setGuardandoPolling(true)
+    setGuardadoPolling(false)
     await fetch('/api/admin/config', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ polling_activo: activo, polling_intervalo: intervalo }),
     })
-    setGuardando(false)
-    setGuardado(true)
-    setTimeout(() => setGuardado(false), 2000)
+    setGuardandoPolling(false)
+    setGuardadoPolling(true)
+    setTimeout(() => setGuardadoPolling(false), 2000)
+  }
+
+  async function guardarX(e: { preventDefault(): void }) {
+    e.preventDefault()
+    setGuardandoX(true)
+    setGuardadoX(false)
+    await fetch('/api/admin/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        x_post_apertura: xApertura,
+        x_msg_apertura: msgApertura,
+        x_post_cierre: xCierre,
+        x_msg_cierre: msgCierre,
+      }),
+    })
+    setGuardandoX(false)
+    setGuardadoX(true)
+    setTimeout(() => setGuardadoX(false), 2000)
   }
 
   async function logout() {
@@ -57,7 +96,7 @@ export default function AdminDashboard({ cotizaciones, pollingActivo, pollingInt
       {/* ── Configuración de actualización ── */}
       <section className={styles.card}>
         <h2 className={styles.cardTitle}>Configuración de actualización</h2>
-        <form onSubmit={guardarConfig} className={styles.configForm}>
+        <form onSubmit={guardarPolling} className={styles.configForm}>
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
@@ -81,8 +120,60 @@ export default function AdminDashboard({ cotizaciones, pollingActivo, pollingInt
             />
           </label>
 
-          <button type="submit" disabled={guardando} className={styles.saveBtn}>
-            {guardando ? 'Guardando…' : guardado ? '✓ Guardado' : 'Guardar'}
+          <button type="submit" disabled={guardandoPolling} className={styles.saveBtn}>
+            {guardandoPolling ? 'Guardando…' : guardadoPolling ? '✓ Guardado' : 'Guardar'}
+          </button>
+        </form>
+      </section>
+
+      {/* ── Opciones de X ── */}
+      <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Opciones de X</h2>
+        <p className={styles.xHint}>
+          Variables disponibles: <code>[blueCompra]</code> <code>[blueVenta]</code>{' '}
+          <code>[oficialCompra]</code> <code>[oficialVenta]</code> <code>[time]</code> <code>[fecha]</code>
+        </p>
+        <form onSubmit={guardarX} className={styles.xForm}>
+          <div className={styles.xBlock}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={xApertura}
+                onChange={e => setXApertura(e.target.checked)}
+                className={styles.checkbox}
+              />
+              Post de apertura
+            </label>
+            <textarea
+              value={msgApertura}
+              onChange={e => setMsgApertura(e.target.value)}
+              disabled={!xApertura}
+              rows={10}
+              className={styles.textarea}
+            />
+          </div>
+
+          <div className={styles.xBlock}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={xCierre}
+                onChange={e => setXCierre(e.target.checked)}
+                className={styles.checkbox}
+              />
+              Post de cierre
+            </label>
+            <textarea
+              value={msgCierre}
+              onChange={e => setMsgCierre(e.target.value)}
+              disabled={!xCierre}
+              rows={10}
+              className={styles.textarea}
+            />
+          </div>
+
+          <button type="submit" disabled={guardandoX} className={styles.saveBtn}>
+            {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
           </button>
         </form>
       </section>

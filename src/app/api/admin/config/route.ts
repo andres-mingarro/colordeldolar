@@ -7,20 +7,25 @@ export async function GET() {
   const rows = await db.select().from(configuracion)
   const cfg = Object.fromEntries(rows.map(r => [r.clave, r.valor]))
   return NextResponse.json({
-    polling_activo:    cfg.polling_activo   ?? 'true',
+    polling_activo:    cfg.polling_activo    ?? 'true',
     polling_intervalo: cfg.polling_intervalo ?? '1',
+    x_post_apertura:   cfg.x_post_apertura   ?? 'false',
+    x_msg_apertura:    cfg.x_msg_apertura    ?? '',
+    x_post_cierre:     cfg.x_post_cierre     ?? 'false',
+    x_msg_cierre:      cfg.x_msg_cierre      ?? '',
   })
 }
 
 export async function PUT(req: NextRequest) {
-  const { polling_activo, polling_intervalo } = await req.json()
+  const body = await req.json()
+  const entries = Object.entries(body).map(([clave, valor]) => ({
+    clave,
+    valor: String(valor),
+  }))
 
   await db
     .insert(configuracion)
-    .values([
-      { clave: 'polling_activo',    valor: String(polling_activo) },
-      { clave: 'polling_intervalo', valor: String(polling_intervalo) },
-    ])
+    .values(entries)
     .onConflictDoUpdate({
       target: configuracion.clave,
       set: { valor: sql`excluded.valor` },

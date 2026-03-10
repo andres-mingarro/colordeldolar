@@ -4,6 +4,30 @@ import { eq } from 'drizzle-orm'
 import { fechaHoyAR } from '@/lib/fecha'
 import AdminDashboard from './AdminDashboard'
 
+const DEFAULT_MSG_APERTURA = `Apertura del mercado
+
+💵 Dólar Blue
+   Compra: $[blueCompra]
+   Venta:  $[blueVenta]
+
+🏦 Dólar Oficial
+   Compra: $[oficialCompra]
+   Venta:  $[oficialVenta]
+
+⏰ [time]`
+
+const DEFAULT_MSG_CIERRE = `Cierre del mercado
+
+💵 Dólar Blue
+   Compra: $[blueCompra]
+   Venta:  $[blueVenta]
+
+🏦 Dólar Oficial
+   Compra: $[oficialCompra]
+   Venta:  $[oficialVenta]
+
+⏰ [time]`
+
 export default async function AdminPage() {
   const hoy = fechaHoyAR()
 
@@ -19,6 +43,10 @@ export default async function AdminPage() {
       cotizaciones={cotizacionesHoy}
       pollingActivo={cfg.polling_activo !== 'false'}
       pollingIntervalo={Number(cfg.polling_intervalo ?? '1')}
+      xPostApertura={cfg.x_post_apertura === 'true'}
+      xMsgApertura={cfg.x_msg_apertura ?? DEFAULT_MSG_APERTURA}
+      xPostCierre={cfg.x_post_cierre === 'true'}
+      xMsgCierre={cfg.x_msg_cierre ?? DEFAULT_MSG_CIERRE}
     />
   )
 }

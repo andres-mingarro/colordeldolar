@@ -22,6 +22,13 @@ export function esMercadoAbierto(): boolean {
   return !esFinDeSemana && esHorarioOperativo
 }
 
+export function esDespuesCierre(): boolean {
+  const ahora = ahoraEnArgentina()
+  const dia = ahora.getDay()
+  const hora = ahora.getHours()
+  return dia !== 0 && dia !== 6 && hora >= HORA_CIERRE
+}
+
 export function msHastaProximaApertura(): number {
   const ahora = ahoraEnArgentina()
   const dia = ahora.getDay()
