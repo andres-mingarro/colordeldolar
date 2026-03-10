@@ -43,6 +43,29 @@
   color: $text-zinc-400;
 }
 
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input { padding-right: 2.5rem; width: 100%; }
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 0.625rem;
+  background: none;
+  border: none;
+  padding: 0;
+  color: $text-zinc-500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+
+  &:hover { color: $text-zinc-200; }
+}
+
 .input {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
