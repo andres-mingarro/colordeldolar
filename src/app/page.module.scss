@@ -1,5 +1,3 @@
-@use '../styles/variables' as *;
-
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.5; }
@@ -13,7 +11,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: $color-bg;
+  background: var(--bg);
   gap: 2.5rem;
   padding: 0 1rem;
 }
@@ -22,7 +20,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: $text-white;
+  color: var(--fg);
 }
 
 .cardsWrapper {
@@ -40,12 +38,12 @@
 
 .loading {
   font-size: 1.125rem;
-  color: $text-zinc-400;
+  color: var(--muted);
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .error {
-  color: $text-red-400;
+  color: var(--error);
 }
 
 // ─── Indicador de estado del mercado ─────────────────────────────────────────
@@ -67,20 +65,20 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 9999px;
-  background: $bg-zinc-600;
+  background: var(--dot-inactive);
 }
 
 .statusDotActive {
-  background: $bg-green-400;
+  background: var(--dot-active);
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .statusText {
   font-size: 0.75rem;
-  color: $text-zinc-500;
+  color: var(--muted);
 }
 
 .lastUpdate {
   font-size: 0.75rem;
-  color: $text-zinc-600;
+  color: var(--dimmer);
 }

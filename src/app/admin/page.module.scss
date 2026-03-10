@@ -1,8 +1,6 @@
-@use '../../styles/variables' as *;
-
 .container {
   min-height: 100vh;
-  background: $color-bg;
+  background: var(--bg);
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
@@ -16,14 +14,14 @@
 .tabs {
   display: flex;
   gap: 0.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0;
 }
 
 .tab {
   padding: 0.5rem 1rem;
   font-size: 0.85rem;
-  color: $text-zinc-400;
+  color: var(--muted);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -32,13 +30,13 @@
   margin-bottom: -1px;
 
   &:hover {
-    color: $text-zinc-200;
+    color: var(--fg-secondary);
   }
 }
 
 .tabActive {
-  color: $text-white;
-  border-bottom-color: $text-white;
+  color: var(--fg);
+  border-bottom-color: var(--fg);
 }
 
 // ─── Header ───────────────────────────────────────────────────────────────────
@@ -52,7 +50,7 @@
 .title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: $text-white;
+  color: var(--fg);
 }
 
 .headerActions {
@@ -63,25 +61,27 @@
 
 .logoutBtn {
   font-size: 0.8rem;
-  color: $text-zinc-400;
+  color: var(--muted);
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--input-border);
   border-radius: 0.375rem;
   padding: 0.375rem 0.75rem;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
+  text-decoration: none;
+  display: inline-block;
 
   &:hover {
-    color: $text-white;
-    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--fg);
+    border-color: var(--input-focus);
   }
 }
 
 // ─── Cards ────────────────────────────────────────────────────────────────────
 
 .card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1.5rem;
   display: flex;
@@ -94,7 +94,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: $text-zinc-400;
+  color: var(--muted);
 }
 
 // ─── Config form ──────────────────────────────────────────────────────────────
@@ -110,14 +110,14 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: $text-white;
+  color: var(--fg);
   cursor: pointer;
 }
 
 .checkbox {
   width: 1rem;
   height: 1rem;
-  accent-color: $bg-green-400;
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -126,27 +126,27 @@
   flex-direction: column;
   gap: 0.4rem;
   font-size: 0.85rem;
-  color: $text-zinc-400;
+  color: var(--muted);
 }
 
 .numberInput {
   width: 100%;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
-  color: $text-white;
+  color: var(--fg);
   font-size: 0.9rem;
   outline: none;
 
-  &:focus { border-color: rgba(255, 255, 255, 0.3); }
+  &:focus { border-color: var(--input-focus); }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
 .saveBtn {
   width: 100%;
-  background: $text-white;
-  color: $color-bg;
+  background: var(--fg);
+  color: var(--bg);
   border: none;
   border-radius: 0.375rem;
   padding: 0.6rem 1rem;
@@ -166,9 +166,9 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
   border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-2);
 }
 
 .horasRow {
@@ -185,7 +185,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: $text-zinc-500;
+  color: var(--muted);
   margin: 0;
 }
 
@@ -196,40 +196,41 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
   border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-2);
 }
 
 .imagenBtn {
-  background: rgba(255, 255, 255, 0.07);
-  color: $text-white;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--input-bg);
+  color: var(--fg);
+  border: 1px solid var(--input-border);
   border-radius: 0.375rem;
   padding: 0.6rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
+  text-decoration: none;
 
-  &:hover { background: rgba(255, 255, 255, 0.12); }
+  &:hover { background: var(--surface); }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.imagenOk    { font-size: 0.8rem; color: #4ade80; }
-.imagenError { font-size: 0.8rem; color: #f87171; }
+.imagenOk    { font-size: 0.8rem; color: var(--dot-active); }
+.imagenError { font-size: 0.8rem; color: var(--error); }
 
 .imagenPreview {
   width: 100%;
   border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
 }
 
 // ─── Tabla ────────────────────────────────────────────────────────────────────
 
 .emptyMsg {
   font-size: 0.875rem;
-  color: $text-zinc-500;
+  color: var(--muted);
 }
 
 .tableWrapper {
@@ -248,14 +249,14 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: $text-zinc-500;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   td {
     padding: 0.625rem 0.75rem;
-    color: $text-zinc-200;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--fg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   tr:last-child td { border-bottom: none; }
@@ -264,26 +265,26 @@
 .tipoBadge {
   font-weight: 600;
   text-transform: capitalize;
-  color: $text-white !important;
+  color: var(--fg) !important;
 }
 
-.varPos    { color: #4ade80 !important; font-weight: 600; }
-.varNeg    { color: #f87171 !important; font-weight: 600; }
-.varNeutral { color: $text-zinc-500 !important; }
+.varPos    { color: var(--dot-active) !important; font-weight: 600; }
+.varNeg    { color: var(--error) !important; font-weight: 600; }
+.varNeutral { color: var(--muted) !important; }
 
 // ── Opciones de X ──────────────────────────────────────
 
 .xHint {
   font-size: 0.75rem;
-  color: $text-zinc-500;
+  color: var(--muted);
   margin-bottom: 1rem;
 
   code {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--code-bg);
     border-radius: 4px;
     padding: 0.1em 0.35em;
     font-family: monospace;
-    color: $text-zinc-200;
+    color: var(--code-color);
     margin-right: 0.25rem;
   }
 }
@@ -302,11 +303,11 @@
 
 .textarea {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 8px;
   padding: 0.625rem 0.75rem;
-  color: $text-white;
+  color: var(--fg);
   font-family: monospace;
   font-size: 0.8rem;
   line-height: 1.5;
@@ -315,7 +316,7 @@
 
   &:focus {
     outline: none;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: var(--input-focus);
   }
 
   &:disabled {

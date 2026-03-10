@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DolarValue from '@/components/dolar-value'
+import ThemeToggle from '@/components/ThemeToggle'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
 import styles from './page.module.scss'
 
@@ -96,6 +97,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <ThemeToggle style={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <h1 className={styles.title}>💵 Color del Dólar</h1>
 
       {cargando ? (

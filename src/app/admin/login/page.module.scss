@@ -1,11 +1,9 @@
-@use '../../../styles/variables' as *;
-
 .container {
   display: flex;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  background: $color-bg;
+  background: var(--bg);
   padding: 1rem;
 }
 
@@ -15,8 +13,8 @@
   gap: 1.25rem;
   width: 100%;
   max-width: 360px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 2rem;
 }
@@ -24,7 +22,7 @@
 .title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: $text-white;
+  color: var(--fg);
   text-align: center;
   margin: 0 0 0.5rem;
 }
@@ -40,7 +38,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: $text-zinc-400;
+  color: var(--muted);
 }
 
 .passwordWrapper {
@@ -57,27 +55,27 @@
   background: none;
   border: none;
   padding: 0;
-  color: $text-zinc-500;
+  color: var(--muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   transition: color 0.15s;
 
-  &:hover { color: $text-zinc-200; }
+  &:hover { color: var(--fg-secondary); }
 }
 
 .input {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 0.5rem;
   padding: 0.625rem 0.75rem;
-  color: $text-white;
+  color: var(--fg);
   font-size: 0.9rem;
   outline: none;
   transition: border-color 0.15s;
 
   &:focus {
-    border-color: rgba(255, 255, 255, 0.35);
+    border-color: var(--input-focus);
   }
 }
 
@@ -88,13 +86,13 @@
 
 .error {
   font-size: 0.8rem;
-  color: $text-red-400;
+  color: var(--error);
   text-align: center;
 }
 
 .button {
-  background: $text-white;
-  color: $color-bg;
+  background: var(--fg);
+  color: var(--bg);
   border: none;
   border-radius: 0.5rem;
   padding: 0.625rem;

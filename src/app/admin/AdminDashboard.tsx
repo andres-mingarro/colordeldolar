@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CotizacionDiaria } from '@/db/schema'
 import styles from './page.module.scss'
+import ThemeToggle from '@/components/ThemeToggle'
 
 interface Props {
   cotizaciones: CotizacionDiaria[]
@@ -119,6 +120,7 @@ export default function AdminDashboard({
         <h1 className={styles.title}>Panel Admin</h1>
         <div className={styles.headerActions}>
           <a href="/" target="_blank" rel="noopener noreferrer" className={styles.logoutBtn}>Home</a>
+          <ThemeToggle />
           <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
         </div>
       </header>

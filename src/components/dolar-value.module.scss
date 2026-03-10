@@ -1,6 +1,3 @@
-@use 'sass:map';
-@use '../styles/variables' as *;
-
 // ─── Card base ────────────────────────────────────────────────────────────────
 
 .card {
@@ -42,7 +39,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: $text-zinc-500;
+  color: var(--muted);
 }
 
 .compra,
@@ -57,15 +54,51 @@
 .venta  { color: var(--variant-venta);  }
 
 // ─── Variantes de color ───────────────────────────────────────────────────────
-// Cada variante sólo sobreescribe las custom properties; el resto de estilos
-// los hereda del bloque .card anterior.
 
-@each $name, $colors in $variants {
-  .variant-#{$name} {
-    --variant-bg:     #{map.get($colors, bg)};
-    --variant-border: #{map.get($colors, border)};
-    --variant-label:  #{map.get($colors, label)};
-    --variant-compra: #{map.get($colors, compra)};
-    --variant-venta:  #{map.get($colors, venta)};
-  }
+.variant-green {
+  --variant-bg:     var(--v-green-bg);
+  --variant-border: var(--v-green-border);
+  --variant-label:  var(--v-green-label);
+  --variant-compra: var(--v-green-compra);
+  --variant-venta:  var(--v-green-venta);
+}
+
+.variant-blue {
+  --variant-bg:     var(--v-blue-bg);
+  --variant-border: var(--v-blue-border);
+  --variant-label:  var(--v-blue-label);
+  --variant-compra: var(--v-blue-compra);
+  --variant-venta:  var(--v-blue-venta);
+}
+
+.variant-yellow {
+  --variant-bg:     var(--v-yellow-bg);
+  --variant-border: var(--v-yellow-border);
+  --variant-label:  var(--v-yellow-label);
+  --variant-compra: var(--v-yellow-compra);
+  --variant-venta:  var(--v-yellow-venta);
+}
+
+.variant-red {
+  --variant-bg:     var(--v-red-bg);
+  --variant-border: var(--v-red-border);
+  --variant-label:  var(--v-red-label);
+  --variant-compra: var(--v-red-compra);
+  --variant-venta:  var(--v-red-venta);
+}
+
+.variant-purple {
+  --variant-bg:     var(--v-purple-bg);
+  --variant-border: var(--v-purple-border);
+  --variant-label:  var(--v-purple-label);
+  --variant-compra: var(--v-purple-compra);
+  --variant-venta:  var(--v-purple-venta);
+}
+
+.variant-neutral {
+  --variant-bg:     var(--v-neutral-bg);
+  --variant-border: var(--v-neutral-border);
+  --variant-label:  var(--v-neutral-label);
+  --variant-compra: var(--v-neutral-compra);
+  --variant-venta:  var(--v-neutral-venta);
 }
