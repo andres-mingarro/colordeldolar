@@ -15,6 +15,7 @@ interface Props {
   xMsgApertura: string
   xPostCierre: boolean
   xMsgCierre: string
+  driveFolderUrl: string
 }
 
 function variacion(apertura: string, cierre: string) {
@@ -37,6 +38,7 @@ export default function AdminDashboard({
   xMsgApertura,
   xPostCierre,
   xMsgCierre,
+  driveFolderUrl,
 }: Props) {
   const router = useRouter()
   const [tab, setTab] = useState<'configuracion' | 'x' | 'cotizaciones' | 'instagram'>('configuracion')
@@ -56,7 +58,7 @@ export default function AdminDashboard({
   const [guardadoX, setGuardadoX] = useState(false)
 
   const [generandoImagen, setGenerandoImagen] = useState(false)
-  const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string } | null>(null)
+  const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string; driveUrl: string } | null>(null)
   const [errorImagen, setErrorImagen] = useState(false)
 
   async function generarImagen() {
@@ -67,7 +69,7 @@ export default function AdminDashboard({
     setGenerandoImagen(false)
     if (res.ok) {
       const data = await res.json()
-      setImagenGenerada({ nombre: data.nombre, preview: data.preview })
+      setImagenGenerada({ nombre: data.nombre, preview: data.preview, driveUrl: data.driveUrl })
     } else {
       setErrorImagen(true)
     }
@@ -262,13 +264,19 @@ export default function AdminDashboard({
       {tab === 'instagram' && <section className={styles.card}>
         <h2 className={styles.cardTitle}>Imagen para Instagram</h2>
         <div className={styles.imagenSection}>
-          <button
-            onClick={generarImagen}
-            disabled={generandoImagen}
-            className={styles.imagenBtn}
-          >
-            {generandoImagen ? 'Generando…' : 'Generar y subir imagen a Drive'}
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
+            <button
+              onClick={generarImagen}
+              disabled={generandoImagen}
+              className={styles.imagenBtn}
+              style={{ flex: 1 }}
+            >
+              {generandoImagen ? 'Generando…' : 'Generar imagen'}
+            </button>
+            <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer" className={styles.imagenBtn} style={{ flex: 1, textAlign: 'center' }}>
+              Ver carpeta en Drive
+            </a>
+          </div>
           {imagenGenerada && (
             <div>
               <p className={styles.imagenOk}>✓ Imagen subida: {imagenGenerada.nombre}</p>

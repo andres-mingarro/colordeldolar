@@ -32,5 +32,10 @@ export async function POST(req: NextRequest) {
 
   await subirImagenDrive(buffer, nombre)
 
-  return NextResponse.json({ ok: true, nombre, preview: buffer.toString('base64') })
+  return NextResponse.json({
+    ok: true,
+    nombre,
+    preview: buffer.toString('base64'),
+    driveUrl: `https://drive.google.com/drive/folders/${process.env.GOOGLE_DRIVE_FOLDER_ID}`,
+  })
 }
