@@ -32,5 +32,5 @@ export async function POST(req: NextRequest) {
 
   await subirImagenDrive(buffer, nombre)
 
-  return NextResponse.json({ ok: true, nombre })
+  return NextResponse.json({ ok: true, nombre, preview: buffer.toString('base64') })
 }

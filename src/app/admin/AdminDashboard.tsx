@@ -39,7 +39,7 @@ export default function AdminDashboard({
   xMsgCierre,
 }: Props) {
   const router = useRouter()
-  const [tab, setTab] = useState<'actualizacion' | 'x' | 'cotizaciones'>('actualizacion')
+  const [tab, setTab] = useState<'configuracion' | 'x' | 'cotizaciones' | 'instagram'>('configuracion')
 
   const [activo, setActivo] = useState(pollingActivo)
   const [intervalo, setIntervalo] = useState(pollingIntervalo)
@@ -56,7 +56,7 @@ export default function AdminDashboard({
   const [guardadoX, setGuardadoX] = useState(false)
 
   const [generandoImagen, setGenerandoImagen] = useState(false)
-  const [imagenGenerada, setImagenGenerada] = useState<string | null>(null)
+  const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string } | null>(null)
   const [errorImagen, setErrorImagen] = useState(false)
 
   async function generarImagen() {
@@ -67,7 +67,7 @@ export default function AdminDashboard({
     setGenerandoImagen(false)
     if (res.ok) {
       const data = await res.json()
-      setImagenGenerada(data.nombre)
+      setImagenGenerada({ nombre: data.nombre, preview: data.preview })
     } else {
       setErrorImagen(true)
     }
@@ -123,10 +123,16 @@ export default function AdminDashboard({
 
       <nav className={styles.tabs}>
         <button
-          className={`${styles.tab} ${tab === 'actualizacion' ? styles.tabActive : ''}`}
-          onClick={() => setTab('actualizacion')}
+          className={`${styles.tab} ${tab === 'configuracion' ? styles.tabActive : ''}`}
+          onClick={() => setTab('configuracion')}
         >
-          Actualización
+          Configuración
+        </button>
+        <button
+          className={`${styles.tab} ${tab === 'instagram' ? styles.tabActive : ''}`}
+          onClick={() => setTab('instagram')}
+        >
+          Instagram
         </button>
         <button
           className={`${styles.tab} ${tab === 'x' ? styles.tabActive : ''}`}
@@ -143,8 +149,8 @@ export default function AdminDashboard({
       </nav>
 
       {/* ── Configuración de actualización ── */}
-      {tab === 'actualizacion' && <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Configuración de actualización</h2>
+      {tab === 'configuracion' && <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Configuración general</h2>
         <form onSubmit={guardarPolling} className={styles.configForm}>
           <label className={styles.checkboxLabel}>
             <input
@@ -198,22 +204,6 @@ export default function AdminDashboard({
           </button>
         </form>
 
-        <div className={styles.imagenSection}>
-          <p className={styles.subGroupTitle}>Imagen para Instagram</p>
-          <button
-            onClick={generarImagen}
-            disabled={generandoImagen}
-            className={styles.imagenBtn}
-          >
-            {generandoImagen ? 'Generando…' : 'Generar y subir imagen a Drive'}
-          </button>
-          {imagenGenerada && (
-            <p className={styles.imagenOk}>✓ Imagen subida: {imagenGenerada}</p>
-          )}
-          {errorImagen && (
-            <p className={styles.imagenError}>Error al generar la imagen.</p>
-          )}
-        </div>
       </section>}
 
       {/* ── Opciones de X ── */}
@@ -268,9 +258,37 @@ export default function AdminDashboard({
         </form>
       </section>}
 
+      {/* ── Instagram ── */}
+      {tab === 'instagram' && <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Imagen para Instagram</h2>
+        <div className={styles.imagenSection}>
+          <button
+            onClick={generarImagen}
+            disabled={generandoImagen}
+            className={styles.imagenBtn}
+          >
+            {generandoImagen ? 'Generando…' : 'Generar y subir imagen a Drive'}
+          </button>
+          {imagenGenerada && (
+            <div>
+              <p className={styles.imagenOk}>✓ Imagen subida: {imagenGenerada.nombre}</p>
+              <img
+                src={`data:image/png;base64,${imagenGenerada.preview}`}
+                alt="Preview"
+                className={styles.imagenPreview}
+              />
+            </div>
+          )}
+          {errorImagen && (
+            <p className={styles.imagenError}>Error al generar la imagen.</p>
+          )}
+        </div>
+      </section>}
+
       {/* ── Cotizaciones de hoy ── */}
       {tab === 'cotizaciones' && <section className={styles.card}>
         <h2 className={styles.cardTitle}>Cotizaciones de hoy</h2>
+        <p className={styles.xHint}>Valores de apertura y cierre registrados hoy para el dólar Blue y Oficial. La variación compara el precio de venta al cierre vs. la apertura.</p>
         {cotizaciones.length === 0 ? (
           <p className={styles.emptyMsg}>Sin datos por hoy.</p>
         ) : (
