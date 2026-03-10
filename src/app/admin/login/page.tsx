@@ -1,16 +1,15 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 import styles from './page.module.scss'
 
 declare global {
   interface Window {
-    turnstile: {
-      render: (container: HTMLElement, options: Record<string, unknown>) => string
-      reset: (widgetId: string) => void
-    }
+    onTurnstileSuccess: (token: string) => void
+    onTurnstileExpired: () => void
+    onTurnstileError: () => void
   }
 }
 
@@ -20,22 +19,11 @@ export default function LoginPage() {
   const [cargando, setCargando] = useState(false)
   const [verPass, setVerPass] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
-  const turnstileRef = useRef<HTMLDivElement>(null)
-  const widgetIdRef = useRef<string | null>(null)
-
-  function renderWidget() {
-    if (!turnstileRef.current || widgetIdRef.current) return
-    widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
-      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-      theme: 'dark',
-      callback: (token: string) => setTurnstileToken(token),
-      'expired-callback': () => setTurnstileToken(null),
-      'error-callback': () => setTurnstileToken(null),
-    })
-  }
 
   useEffect(() => {
-    if (window.turnstile) renderWidget()
+    window.onTurnstileSuccess = (token: string) => setTurnstileToken(token)
+    window.onTurnstileExpired = () => setTurnstileToken(null)
+    window.onTurnstileError = () => setTurnstileToken(null)
   }, [])
 
   async function handleSubmit(e: { preventDefault(): void; currentTarget: HTMLFormElement }) {
@@ -61,7 +49,6 @@ export default function LoginPage() {
       setError(true)
       setCargando(false)
       setTurnstileToken(null)
-      if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current)
     }
   }
 
@@ -70,7 +57,6 @@ export default function LoginPage() {
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js"
         strategy="afterInteractive"
-        onLoad={renderWidget}
       />
 
       <form className={styles.card} onSubmit={handleSubmit}>
@@ -121,7 +107,14 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div ref={turnstileRef} className={styles.turnstile} />
+        <div
+          className={`cf-turnstile ${styles.turnstile}`}
+          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          data-theme="dark"
+          data-callback="onTurnstileSuccess"
+          data-expired-callback="onTurnstileExpired"
+          data-error-callback="onTurnstileError"
+        />
 
         {error && <p className={styles.error}>Credenciales incorrectas.</p>}
 
