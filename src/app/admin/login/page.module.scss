@@ -81,6 +81,11 @@
   }
 }
 
+.turnstile {
+  display: flex;
+  justify-content: center;
+}
+
 .error {
   font-size: 0.8rem;
   color: $text-red-400;

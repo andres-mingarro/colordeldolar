@@ -1,8 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminToken } from '@/lib/auth'
 
+async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      secret: process.env.TURNSTILE_SECRET_KEY,
+      response: token,
+      remoteip: ip,
+    }),
+  })
+  const data = await res.json() as { success: boolean }
+  return data.success
+}
+
 export async function POST(req: NextRequest) {
-  const { username, password } = await req.json()
+  const { username, password, turnstileToken } = await req.json()
+
+  const ip = req.headers.get('cf-connecting-ip') ?? req.headers.get('x-forwarded-for') ?? '127.0.0.1'
+  const turnstileOk = turnstileToken ? await verifyTurnstile(turnstileToken, ip) : false
+
+  if (!turnstileOk) {
+    return NextResponse.json({ error: 'Verificación fallida' }, { status: 403 })
+  }
 
   if (
     username !== (process.env.ADMIN_USERNAME ?? 'admin') ||

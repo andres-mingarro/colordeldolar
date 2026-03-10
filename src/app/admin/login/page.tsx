@@ -1,17 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Script from 'next/script'
 import styles from './page.module.scss'
+
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: HTMLElement, options: Record<string, unknown>) => string
+      reset: (widgetId: string) => void
+    }
+    onTurnstileLoad: () => void
+  }
+}
 
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState(false)
   const [cargando, setCargando] = useState(false)
   const [verPass, setVerPass] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<HTMLDivElement>(null)
+  const widgetIdRef = useRef<string | null>(null)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function renderWidget() {
+    if (!turnstileRef.current || widgetIdRef.current) return
+    widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+      theme: 'dark',
+      callback: (token: string) => setTurnstileToken(token),
+      'expired-callback': () => setTurnstileToken(null),
+      'error-callback': () => setTurnstileToken(null),
+    })
+  }
+
+  useEffect(() => {
+    window.onTurnstileLoad = renderWidget
+    if (window.turnstile) renderWidget()
+  }, [])
+
+  async function handleSubmit(e: { preventDefault(): void; currentTarget: HTMLFormElement }) {
     e.preventDefault()
+    if (!turnstileToken) return
     setCargando(true)
     setError(false)
 
@@ -22,6 +53,7 @@ export default function LoginPage() {
       body: JSON.stringify({
         username: form.get('username'),
         password: form.get('password'),
+        turnstileToken,
       }),
     })
 
@@ -30,11 +62,18 @@ export default function LoginPage() {
     } else {
       setError(true)
       setCargando(false)
+      setTurnstileToken(null)
+      if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current)
     }
   }
 
   return (
     <div className={styles.container}>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
+        strategy="lazyOnload"
+      />
+
       <form className={styles.card} onSubmit={handleSubmit}>
         <h1 className={styles.title}>Panel Admin</h1>
 
@@ -83,9 +122,15 @@ export default function LoginPage() {
           </div>
         </div>
 
+        <div ref={turnstileRef} className={styles.turnstile} />
+
         {error && <p className={styles.error}>Credenciales incorrectas.</p>}
 
-        <button type="submit" disabled={cargando} className={styles.button}>
+        <button
+          type="submit"
+          disabled={cargando || !turnstileToken}
+          className={styles.button}
+        >
           {cargando ? 'Ingresando...' : 'Ingresar'}
         </button>
       </form>
