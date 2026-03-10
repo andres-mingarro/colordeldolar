@@ -68,13 +68,13 @@ export async function generarImagenDolar({ blue, oficial, fecha }: Params): Prom
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ fontSize: 18, color: '#71717a' }}>Compra</div>
                 <div style={{ fontSize: 54, fontWeight: 700, color: '#ffffff' }}>
-                  ${blue.compra.toLocaleString('es-AR')}
+                  {`$${blue.compra.toLocaleString('es-AR')}`}
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
                 <div style={{ fontSize: 18, color: '#71717a' }}>Venta</div>
                 <div style={{ fontSize: 54, fontWeight: 700, color: '#4ade80' }}>
-                  ${blue.venta.toLocaleString('es-AR')}
+                  {`$${blue.venta.toLocaleString('es-AR')}`}
                 </div>
               </div>
             </div>
@@ -100,13 +100,13 @@ export async function generarImagenDolar({ blue, oficial, fecha }: Params): Prom
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ fontSize: 18, color: '#71717a' }}>Compra</div>
                 <div style={{ fontSize: 54, fontWeight: 700, color: '#ffffff' }}>
-                  ${oficial.compra.toLocaleString('es-AR')}
+                  {`$${oficial.compra.toLocaleString('es-AR')}`}
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
                 <div style={{ fontSize: 18, color: '#71717a' }}>Venta</div>
                 <div style={{ fontSize: 54, fontWeight: 700, color: '#e4e4e7' }}>
-                  ${oficial.venta.toLocaleString('es-AR')}
+                  {`$${oficial.venta.toLocaleString('es-AR')}`}
                 </div>
               </div>
             </div>
