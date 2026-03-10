@@ -9,7 +9,7 @@ function secret() {
   )
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   if (PUBLIC_PATHS.includes(pathname)) return NextResponse.next()
