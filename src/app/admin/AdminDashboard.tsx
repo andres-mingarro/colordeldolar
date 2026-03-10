@@ -55,6 +55,24 @@ export default function AdminDashboard({
   const [guardandoX, setGuardandoX] = useState(false)
   const [guardadoX, setGuardadoX] = useState(false)
 
+  const [generandoImagen, setGenerandoImagen] = useState(false)
+  const [imagenGenerada, setImagenGenerada] = useState<string | null>(null)
+  const [errorImagen, setErrorImagen] = useState(false)
+
+  async function generarImagen() {
+    setGenerandoImagen(true)
+    setImagenGenerada(null)
+    setErrorImagen(false)
+    const res = await fetch('/api/admin/imagen', { method: 'POST' })
+    setGenerandoImagen(false)
+    if (res.ok) {
+      const data = await res.json()
+      setImagenGenerada(data.nombre)
+    } else {
+      setErrorImagen(true)
+    }
+  }
+
   async function guardarPolling(e: { preventDefault(): void }) {
     e.preventDefault()
     setGuardandoPolling(true)
@@ -179,6 +197,23 @@ export default function AdminDashboard({
             {guardandoPolling ? 'Guardando…' : guardadoPolling ? '✓ Guardado' : 'Guardar'}
           </button>
         </form>
+
+        <div className={styles.imagenSection}>
+          <p className={styles.subGroupTitle}>Imagen para Instagram</p>
+          <button
+            onClick={generarImagen}
+            disabled={generandoImagen}
+            className={styles.imagenBtn}
+          >
+            {generandoImagen ? 'Generando…' : 'Generar y subir imagen a Drive'}
+          </button>
+          {imagenGenerada && (
+            <p className={styles.imagenOk}>✓ Imagen subida: {imagenGenerada}</p>
+          )}
+          {errorImagen && (
+            <p className={styles.imagenError}>Error al generar la imagen.</p>
+          )}
+        </div>
       </section>}
 
       {/* ── Opciones de X ── */}
