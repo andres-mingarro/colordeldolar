@@ -55,6 +55,12 @@
   color: $text-white;
 }
 
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .logoutBtn {
   font-size: 0.8rem;
   color: $text-zinc-400;

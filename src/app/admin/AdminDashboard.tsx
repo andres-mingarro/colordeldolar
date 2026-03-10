@@ -97,7 +97,10 @@ export default function AdminDashboard({
     <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.title}>Panel Admin</h1>
-        <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
+        <div className={styles.headerActions}>
+          <a href="/" target="_blank" rel="noopener noreferrer" className={styles.logoutBtn}>Home</a>
+          <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
+        </div>
       </header>
 
       <nav className={styles.tabs}>
