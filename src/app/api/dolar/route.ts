@@ -102,7 +102,7 @@ async function postearEnX({
 
   if (
     !esApertura &&
-    esDespuesCierre() &&
+    esDespuesCierre(cfg.mercado_hora_cierre ?? '18:00') &&
     cfg.x_post_cierre === 'true' &&
     cfg.x_msg_cierre &&
     cfg.x_cierre_posted !== fecha

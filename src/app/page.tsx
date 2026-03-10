@@ -22,6 +22,8 @@ export default function Home() {
   const [cargando, setCargando] = useState(true)
   const [pollingActivo, setPollingActivo] = useState(true)
   const [pollingIntervaloMs, setPollingIntervaloMs] = useState(60_000)
+  const [horaApertura, setHoraApertura] = useState('09:00')
+  const [horaCierre, setHoraCierre] = useState('18:00')
   const [configCargada, setConfigCargada] = useState(false)
 
   const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -50,21 +52,21 @@ export default function Home() {
     limpiarTimers()
     if (!pollingActivo && !FORCE_POLLING) return
 
-    const abierto = esMercadoAbierto()
+    const abierto = esMercadoAbierto(horaApertura, horaCierre)
     setMercadoAbierto(abierto)
 
     if (abierto || FORCE_POLLING) {
       intervaloRef.current = setInterval(() => {
         fetchDolar()
-        if (!esMercadoAbierto() && !FORCE_POLLING) iniciarPollingRef.current?.()
+        if (!esMercadoAbierto(horaApertura, horaCierre) && !FORCE_POLLING) iniciarPollingRef.current?.()
       }, pollingIntervaloMs)
     } else {
       timeoutRef.current = setTimeout(() => {
         fetchDolar()
         iniciarPollingRef.current?.()
-      }, msHastaProximaApertura())
+      }, msHastaProximaApertura(horaApertura, horaCierre))
     }
-  }, [fetchDolar, limpiarTimers, pollingActivo, pollingIntervaloMs])
+  }, [fetchDolar, limpiarTimers, pollingActivo, pollingIntervaloMs, horaApertura, horaCierre])
 
   useEffect(() => {
     iniciarPollingRef.current = iniciarPolling
@@ -77,6 +79,8 @@ export default function Home() {
       .then(cfg => {
         setPollingActivo(cfg.polling_activo)
         setPollingIntervaloMs(cfg.polling_intervalo * 60_000)
+        if (cfg.mercado_hora_apertura) setHoraApertura(cfg.mercado_hora_apertura)
+        if (cfg.mercado_hora_cierre) setHoraCierre(cfg.mercado_hora_cierre)
       })
       .catch(() => {})
       .finally(() => setConfigCargada(true))

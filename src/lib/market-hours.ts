@@ -2,55 +2,65 @@
 export const FORCE_POLLING = false
 
 const TIMEZONE = 'America/Argentina/Buenos_Aires'
-const HORA_APERTURA = 9   // 9:00 AM
-const HORA_CIERRE = 18    // 6:00 PM
 
 function ahoraEnArgentina(): Date {
   return new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE }))
 }
 
-export function esMercadoAbierto(): boolean {
+function parseHora(horaStr: string): { hora: number; minutos: number } {
+  const [h, m] = horaStr.split(':').map(Number)
+  return { hora: h ?? 9, minutos: m ?? 0 }
+}
+
+function minutosDelDia(date: Date): number {
+  return date.getHours() * 60 + date.getMinutes()
+}
+
+export function esMercadoAbierto(horaApertura = '09:00', horaCierre = '18:00'): boolean {
   if (FORCE_POLLING) return true
 
   const ahora = ahoraEnArgentina()
-  const dia = ahora.getDay()   // 0=Dom, 1=Lun ... 6=Sab
-  const hora = ahora.getHours()
-
+  const dia = ahora.getDay()
   const esFinDeSemana = dia === 0 || dia === 6
-  const esHorarioOperativo = hora >= HORA_APERTURA && hora < HORA_CIERRE
+  if (esFinDeSemana) return false
 
-  return !esFinDeSemana && esHorarioOperativo
+  const minActual = minutosDelDia(ahora)
+  const { hora: hA, minutos: mA } = parseHora(horaApertura)
+  const { hora: hC, minutos: mC } = parseHora(horaCierre)
+
+  return minActual >= hA * 60 + mA && minActual < hC * 60 + mC
 }
 
-export function esDespuesCierre(): boolean {
+export function esDespuesCierre(horaCierre = '18:00'): boolean {
   const ahora = ahoraEnArgentina()
   const dia = ahora.getDay()
-  const hora = ahora.getHours()
-  return dia !== 0 && dia !== 6 && hora >= HORA_CIERRE
+  if (dia === 0 || dia === 6) return false
+
+  const { hora: hC, minutos: mC } = parseHora(horaCierre)
+  return minutosDelDia(ahora) >= hC * 60 + mC
 }
 
-export function msHastaProximaApertura(): number {
+export function msHastaProximaApertura(horaApertura = '09:00', horaCierre = '18:00'): number {
   const ahora = ahoraEnArgentina()
   const dia = ahora.getDay()
-  const hora = ahora.getHours()
+
+  const { hora: hA, minutos: mA } = parseHora(horaApertura)
+  const { hora: hC, minutos: mC } = parseHora(horaCierre)
 
   const proxima = new Date(ahora)
-  proxima.setSeconds(0)
-  proxima.setMilliseconds(0)
-  proxima.setHours(HORA_APERTURA, 0, 0, 0)
+  proxima.setHours(hA, mA, 0, 0)
+
+  const minActual = minutosDelDia(ahora)
+  const minCierre = hC * 60 + mC
 
   if (dia === 6) {
-    // Sábado → lunes
     proxima.setDate(proxima.getDate() + 2)
   } else if (dia === 0) {
-    // Domingo → lunes
     proxima.setDate(proxima.getDate() + 1)
-  } else if (hora >= HORA_CIERRE) {
-    // Después del cierre → siguiente día hábil
-    const diasHastaSiguiente = dia === 5 ? 3 : 1 // Viernes → lunes
+  } else if (minActual >= minCierre) {
+    const diasHastaSiguiente = dia === 5 ? 3 : 1
     proxima.setDate(proxima.getDate() + diasHastaSiguiente)
   }
-  // Si es antes de apertura el mismo día hábil, proxima ya está bien
 
   return proxima.getTime() - ahora.getTime()
 }
