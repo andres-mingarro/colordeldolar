@@ -11,7 +11,6 @@ declare global {
       render: (container: HTMLElement, options: Record<string, unknown>) => string
       reset: (widgetId: string) => void
     }
-    onTurnstileLoad: () => void
   }
 }
 
@@ -36,7 +35,6 @@ export default function LoginPage() {
   }
 
   useEffect(() => {
-    window.onTurnstileLoad = renderWidget
     if (window.turnstile) renderWidget()
   }, [])
 
@@ -70,8 +68,9 @@ export default function LoginPage() {
   return (
     <div className={styles.container}>
       <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
-        strategy="lazyOnload"
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        strategy="afterInteractive"
+        onLoad={renderWidget}
       />
 
       <form className={styles.card} onSubmit={handleSubmit}>
