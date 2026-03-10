@@ -126,7 +126,7 @@ export default function AdminDashboard({
               onChange={e => setActivo(e.target.checked)}
               className={styles.checkbox}
             />
-            Actualización activa
+            Activar actualización automática
           </label>
 
           <label className={styles.fieldLabel}>
