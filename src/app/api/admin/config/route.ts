@@ -7,12 +7,14 @@ export async function GET() {
   const rows = await db.select().from(configuracion)
   const cfg = Object.fromEntries(rows.map(r => [r.clave, r.valor]))
   return NextResponse.json({
-    polling_activo:    cfg.polling_activo    ?? 'true',
-    polling_intervalo: cfg.polling_intervalo ?? '1',
-    x_post_apertura:   cfg.x_post_apertura   ?? 'false',
-    x_msg_apertura:    cfg.x_msg_apertura    ?? '',
-    x_post_cierre:     cfg.x_post_cierre     ?? 'false',
-    x_msg_cierre:      cfg.x_msg_cierre      ?? '',
+    polling_activo:        cfg.polling_activo        ?? 'true',
+    polling_intervalo:     cfg.polling_intervalo     ?? '1',
+    mercado_hora_apertura: cfg.mercado_hora_apertura ?? '10:00',
+    mercado_hora_cierre:   cfg.mercado_hora_cierre   ?? '18:00',
+    x_post_apertura:       cfg.x_post_apertura       ?? 'false',
+    x_msg_apertura:        cfg.x_msg_apertura        ?? '',
+    x_post_cierre:         cfg.x_post_cierre         ?? 'false',
+    x_msg_cierre:          cfg.x_msg_cierre          ?? '',
   })
 }
 

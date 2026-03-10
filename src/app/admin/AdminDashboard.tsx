@@ -9,6 +9,8 @@ interface Props {
   cotizaciones: CotizacionDiaria[]
   pollingActivo: boolean
   pollingIntervalo: number
+  mercadoHoraApertura: string
+  mercadoHoraCierre: string
   xPostApertura: boolean
   xMsgApertura: string
   xPostCierre: boolean
@@ -29,6 +31,8 @@ export default function AdminDashboard({
   cotizaciones,
   pollingActivo,
   pollingIntervalo,
+  mercadoHoraApertura,
+  mercadoHoraCierre,
   xPostApertura,
   xMsgApertura,
   xPostCierre,
@@ -39,6 +43,8 @@ export default function AdminDashboard({
 
   const [activo, setActivo] = useState(pollingActivo)
   const [intervalo, setIntervalo] = useState(pollingIntervalo)
+  const [horaApertura, setHoraApertura] = useState(mercadoHoraApertura)
+  const [horaCierre, setHoraCierre] = useState(mercadoHoraCierre)
   const [guardandoPolling, setGuardandoPolling] = useState(false)
   const [guardadoPolling, setGuardadoPolling] = useState(false)
 
@@ -56,7 +62,7 @@ export default function AdminDashboard({
     await fetch('/api/admin/config', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ polling_activo: activo, polling_intervalo: intervalo }),
+      body: JSON.stringify({ polling_activo: activo, polling_intervalo: intervalo, mercado_hora_apertura: horaApertura, mercado_hora_cierre: horaCierre }),
     })
     setGuardandoPolling(false)
     setGuardadoPolling(true)
@@ -141,6 +147,30 @@ export default function AdminDashboard({
               className={styles.numberInput}
             />
           </label>
+
+          <div className={styles.subGroup}>
+            <p className={styles.subGroupTitle}>Mercado</p>
+            <div className={styles.horasRow}>
+              <label className={styles.fieldLabel}>
+                Hora de apertura
+                <input
+                  type="time"
+                  value={horaApertura}
+                  onChange={e => setHoraApertura(e.target.value)}
+                  className={styles.numberInput}
+                />
+              </label>
+              <label className={styles.fieldLabel}>
+                Hora de cierre
+                <input
+                  type="time"
+                  value={horaCierre}
+                  onChange={e => setHoraCierre(e.target.value)}
+                  className={styles.numberInput}
+                />
+              </label>
+            </div>
+          </div>
 
           <button type="submit" disabled={guardandoPolling} className={styles.saveBtn}>
             {guardandoPolling ? 'Guardando…' : guardadoPolling ? '✓ Guardado' : 'Guardar'}

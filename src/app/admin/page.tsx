@@ -43,6 +43,8 @@ export default async function AdminPage() {
       cotizaciones={cotizacionesHoy}
       pollingActivo={cfg.polling_activo !== 'false'}
       pollingIntervalo={Number(cfg.polling_intervalo ?? '1')}
+      mercadoHoraApertura={cfg.mercado_hora_apertura ?? '10:00'}
+      mercadoHoraCierre={cfg.mercado_hora_cierre ?? '18:00'}
       xPostApertura={cfg.x_post_apertura === 'true'}
       xMsgApertura={cfg.x_msg_apertura ?? DEFAULT_MSG_APERTURA}
       xPostCierre={cfg.x_post_cierre === 'true'}
