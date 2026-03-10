@@ -6,9 +6,39 @@
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   max-width: 860px;
   margin: 0 auto;
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: $text-zinc-400;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: $text-zinc-200;
+  }
+}
+
+.tabActive {
+  color: $text-white;
+  border-bottom-color: $text-white;
 }
 
 // ─── Header ───────────────────────────────────────────────────────────────────

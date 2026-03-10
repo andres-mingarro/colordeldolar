@@ -35,6 +35,7 @@ export default function AdminDashboard({
   xMsgCierre,
 }: Props) {
   const router = useRouter()
+  const [tab, setTab] = useState<'actualizacion' | 'x' | 'cotizaciones'>('actualizacion')
 
   const [activo, setActivo] = useState(pollingActivo)
   const [intervalo, setIntervalo] = useState(pollingIntervalo)
@@ -93,8 +94,29 @@ export default function AdminDashboard({
         <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
       </header>
 
+      <nav className={styles.tabs}>
+        <button
+          className={`${styles.tab} ${tab === 'actualizacion' ? styles.tabActive : ''}`}
+          onClick={() => setTab('actualizacion')}
+        >
+          Actualización
+        </button>
+        <button
+          className={`${styles.tab} ${tab === 'x' ? styles.tabActive : ''}`}
+          onClick={() => setTab('x')}
+        >
+          Opciones de X
+        </button>
+        <button
+          className={`${styles.tab} ${tab === 'cotizaciones' ? styles.tabActive : ''}`}
+          onClick={() => setTab('cotizaciones')}
+        >
+          Cotizaciones de hoy
+        </button>
+      </nav>
+
       {/* ── Configuración de actualización ── */}
-      <section className={styles.card}>
+      {tab === 'actualizacion' && <section className={styles.card}>
         <h2 className={styles.cardTitle}>Configuración de actualización</h2>
         <form onSubmit={guardarPolling} className={styles.configForm}>
           <label className={styles.checkboxLabel}>
@@ -124,10 +146,10 @@ export default function AdminDashboard({
             {guardandoPolling ? 'Guardando…' : guardadoPolling ? '✓ Guardado' : 'Guardar'}
           </button>
         </form>
-      </section>
+      </section>}
 
       {/* ── Opciones de X ── */}
-      <section className={styles.card}>
+      {tab === 'x' && <section className={styles.card}>
         <h2 className={styles.cardTitle}>Opciones de X</h2>
         <p className={styles.xHint}>
           Variables disponibles: <code>[blueCompra]</code> <code>[blueVenta]</code>{' '}
@@ -176,10 +198,10 @@ export default function AdminDashboard({
             {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
           </button>
         </form>
-      </section>
+      </section>}
 
       {/* ── Cotizaciones de hoy ── */}
-      <section className={styles.card}>
+      {tab === 'cotizaciones' && <section className={styles.card}>
         <h2 className={styles.cardTitle}>Cotizaciones de hoy</h2>
         {cotizaciones.length === 0 ? (
           <p className={styles.emptyMsg}>Sin datos por hoy.</p>
@@ -216,7 +238,7 @@ export default function AdminDashboard({
             </table>
           </div>
         )}
-      </section>
+      </section>}
     </div>
   )
 }
