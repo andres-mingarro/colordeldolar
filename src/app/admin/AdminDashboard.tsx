@@ -54,9 +54,9 @@ export default function AdminDashboard({ cotizaciones, pollingActivo, pollingInt
         <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
       </header>
 
-      {/* ── Configuración de polling ── */}
+      {/* ── Configuración de actualización ── */}
       <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Configuración de polling</h2>
+        <h2 className={styles.cardTitle}>Configuración de actualización</h2>
         <form onSubmit={guardarConfig} className={styles.configForm}>
           <label className={styles.checkboxLabel}>
             <input
@@ -65,7 +65,7 @@ export default function AdminDashboard({ cotizaciones, pollingActivo, pollingInt
               onChange={e => setActivo(e.target.checked)}
               className={styles.checkbox}
             />
-            Polling activo
+            Actualización activa
           </label>
 
           <label className={styles.fieldLabel}>

@@ -120,9 +120,9 @@ export default function Home() {
           <span className={`${styles.statusDot} ${dotActive ? styles.statusDotActive : ''}`} />
           <span className={styles.statusText}>
             {FORCE_POLLING
-              ? 'Polling forzado 24/7 (desarrollo)'
+              ? 'Actualización forzada 24/7 (desarrollo)'
               : !pollingActivo
-              ? 'Polling desactivado'
+              ? 'Actualización desactivada'
               : mercadoAbierto
               ? `Mercado abierto · actualizando cada ${pollingIntervaloMs / 60_000} min`
               : 'Mercado cerrado · sin actualización automática'}
