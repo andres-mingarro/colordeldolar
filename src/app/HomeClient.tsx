@@ -22,9 +22,7 @@ interface Props {
 
 export default function HomeClient({ initialData }: Props) {
   const [data, setData] = useState<DolarResponse | null>(initialData)
-  const [ultimaActualizacion, setUltimaActualizacion] = useState<string>(
-    initialData ? new Date().toLocaleTimeString('es-AR') : ''
-  )
+  const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
   const [mercadoAbierto, setMercadoAbierto] = useState(false)
   const [cargando, setCargando] = useState(initialData === null)
   const [pollingActivo, setPollingActivo] = useState(true)
@@ -80,6 +78,10 @@ export default function HomeClient({ initialData }: Props) {
   })
 
   useEffect(() => {
+    if (initialData) setUltimaActualizacion(new Date().toLocaleTimeString('es-AR'))
+  }, [initialData])
+
+  useEffect(() => {
     if (initialData === null) fetchDolar()
     fetch('/api/config')
       .then(r => r.json())
@@ -102,7 +104,7 @@ export default function HomeClient({ initialData }: Props) {
   const dotActive = FORCE_POLLING || (pollingActivo && mercadoAbierto)
 
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <ThemeToggle style={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <h1 className={styles.title}>💵 Color del Dólar</h1>
 
@@ -144,6 +146,6 @@ export default function HomeClient({ initialData }: Props) {
           <p className={styles.lastUpdate}>Última actualización: {ultimaActualizacion}</p>
         )}
       </div>
-    </div>
+    </main>
   )
 }

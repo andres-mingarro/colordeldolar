@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 
 export default function ThemeToggle({ style }: { style?: React.CSSProperties }) {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     const t = document.documentElement.getAttribute('data-theme') as 'dark' | 'light' | null
     if (t) setTheme(t)
+    setMounted(true)
   }, [])
 
   function toggle() {
@@ -16,6 +18,21 @@ export default function ThemeToggle({ style }: { style?: React.CSSProperties }) 
     localStorage.setItem('theme', next)
     setTheme(next)
   }
+
+  if (!mounted) return (
+    <button
+      aria-hidden
+      style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: '0.375rem',
+        padding: '0.375rem 0.5rem',
+        width: '2rem',
+        height: '2rem',
+        ...style,
+      }}
+    />
+  )
 
   return (
     <button
