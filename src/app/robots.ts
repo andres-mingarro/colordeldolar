@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin', '/api/admin'],
     },
-    sitemap: 'https://colordeldolar.com/sitemap.xml',
+    sitemap: 'https://colordeldolar.com.ar/sitemap.xml',
   }
 }

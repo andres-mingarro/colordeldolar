@@ -119,7 +119,7 @@ export async function generarImagenDolar({ blue, oficial, fecha }: Params): Prom
 
         {/* Footer */}
         <div style={{ fontSize: 26, color: '#3f3f46' }}>
-          colordeldolar.com
+          colordeldolar.com.ar
         </div>
       </div>
     ),

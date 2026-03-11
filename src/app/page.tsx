@@ -22,7 +22,7 @@ export default async function Home() {
     '@type': 'WebPage',
     name: 'Color del Dólar',
     description: 'Cotización del dólar blue y oficial en Argentina en tiempo real',
-    url: 'https://colordeldolar.com',
+    url: 'https://colordeldolar.com.ar',
     inLanguage: 'es-AR',
     ...(initialData && {
       mainEntity: [

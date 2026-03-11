@@ -6,8 +6,8 @@ Color del Dólar es una herramienta de consulta rápida para seguir la evolució
 
 ## Datos disponibles
 
-- [Cotización actual](https://colordeldolar.com/api/dolar): JSON con los valores actuales de compra y venta del dólar Blue y Oficial. Responde `{ blue: { compra, venta }, oficial: { compra, venta } }`.
-- [Configuración del mercado](https://colordeldolar.com/api/config): JSON con el estado del polling y el horario del mercado configurado. Responde `{ polling_activo, polling_intervalo, mercado_hora_apertura, mercado_hora_cierre }`.
+- [Cotización actual](https://colordeldolar.com.ar/api/dolar): JSON con los valores actuales de compra y venta del dólar Blue y Oficial. Responde `{ blue: { compra, venta }, oficial: { compra, venta } }`.
+- [Configuración del mercado](https://colordeldolar.com.ar/api/config): JSON con el estado del polling y el horario del mercado configurado. Responde `{ polling_activo, polling_intervalo, mercado_hora_apertura, mercado_hora_cierre }`.
 
 ## Funcionamiento
 
