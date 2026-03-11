@@ -1,0 +1,26 @@
+# Color del Dólar
+
+> Sitio web argentino que muestra en tiempo real las cotizaciones del dólar Blue y el dólar Oficial. Se actualiza automáticamente durante el horario del mercado (lunes a viernes).
+
+Color del Dólar es una herramienta de consulta rápida para seguir la evolución del tipo de cambio en Argentina. Muestra los precios de compra y venta de las dos cotizaciones más consultadas: el dólar Blue (mercado informal) y el dólar Oficial (tipo de cambio regulado por el BCRA).
+
+## Datos disponibles
+
+- [Cotización actual](https://colordeldolar.com/api/dolar): JSON con los valores actuales de compra y venta del dólar Blue y Oficial. Responde `{ blue: { compra, venta }, oficial: { compra, venta } }`.
+- [Configuración del mercado](https://colordeldolar.com/api/config): JSON con el estado del polling y el horario del mercado configurado. Responde `{ polling_activo, polling_intervalo, mercado_hora_apertura, mercado_hora_cierre }`.
+
+## Funcionamiento
+
+- Los datos se obtienen de [dolarapi.com](https://dolarapi.com) y se actualizan durante el horario de mercado.
+- El sitio realiza polling automático en el cliente durante el horario configurado (por defecto lunes a viernes).
+- Se registran los valores de apertura y cierre diarios en una base de datos PostgreSQL.
+- El sistema postea automáticamente en X (Twitter) al abrir y cerrar el mercado si está configurado.
+
+## Fuente de datos
+
+Los valores provienen de [dolarapi.com](https://dolarapi.com), una API pública que agrega cotizaciones del mercado argentino.
+
+## Cobertura
+
+- **Dólar Blue**: cotización del mercado informal argentino (precio de compra y venta).
+- **Dólar Oficial**: cotización regulada por el Banco Central de la República Argentina (BCRA).
