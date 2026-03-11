@@ -7,7 +7,7 @@ export async function GET() {
   const cfg = Object.fromEntries(rows.map(r => [r.clave, r.valor]))
   return NextResponse.json({
     polling_activo:        cfg.polling_activo   !== 'false',
-    polling_intervalo:     Number(cfg.polling_intervalo ?? '1'),
+    polling_intervalo:     Math.max(1, parseInt(cfg.polling_intervalo ?? '1', 10) || 1),
     mercado_hora_apertura: cfg.mercado_hora_apertura ?? '09:00',
     mercado_hora_cierre:   cfg.mercado_hora_cierre   ?? '18:00',
   })

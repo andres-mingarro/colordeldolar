@@ -18,8 +18,10 @@ export async function subirImagenDrive(buffer: Buffer, nombre: string): Promise<
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID!
 
   // Si ya existe un archivo con ese nombre en la carpeta, lo sobreescribe
+  const safeName = nombre.replace(/'/g, "\\'")
+  const safeFolderId = folderId.replace(/'/g, "\\'")
   const existing = await drive.files.list({
-    q: `name='${nombre}' and '${folderId}' in parents and trashed=false`,
+    q: `name='${safeName}' and '${safeFolderId}' in parents and trashed=false`,
     fields: 'files(id)',
   })
 

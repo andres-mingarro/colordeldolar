@@ -18,12 +18,25 @@ export async function GET() {
   })
 }
 
+const CLAVES_PERMITIDAS = new Set([
+  'polling_activo',
+  'polling_intervalo',
+  'mercado_hora_apertura',
+  'mercado_hora_cierre',
+  'x_post_apertura',
+  'x_msg_apertura',
+  'x_post_cierre',
+  'x_msg_cierre',
+])
+
 export async function PUT(req: NextRequest) {
   const body = await req.json()
-  const entries = Object.entries(body).map(([clave, valor]) => ({
-    clave,
-    valor: String(valor),
-  }))
+  const entries = Object.entries(body)
+    .filter(([clave]) => CLAVES_PERMITIDAS.has(clave))
+    .map(([clave, valor]) => ({
+      clave,
+      valor: String(valor),
+    }))
 
   await db
     .insert(configuracion)

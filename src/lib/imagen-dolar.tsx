@@ -11,12 +11,16 @@ interface Params {
   fecha: string
 }
 
+let fontsCache: { regular: ArrayBuffer; bold: ArrayBuffer } | null = null
+
 async function getFonts() {
+  if (fontsCache) return fontsCache
   const [regular, bold] = await Promise.all([
     fetch('https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff').then(r => r.arrayBuffer()),
     fetch('https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-700-normal.woff').then(r => r.arrayBuffer()),
   ])
-  return { regular, bold }
+  fontsCache = { regular, bold }
+  return fontsCache
 }
 
 export async function generarImagenDolar({ blue, oficial, fecha }: Params): Promise<Buffer> {

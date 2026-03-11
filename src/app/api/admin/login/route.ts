@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminToken } from '@/lib/auth'
+import { createAdminToken, verifyPassword } from '@/lib/auth'
 
 async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      secret: process.env.TURNSTILE_SECRET_KEY,
-      response: token,
-      remoteip: ip,
-    }),
-  })
-  const data = await res.json() as { success: boolean }
-  return data.success
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: process.env.TURNSTILE_SECRET_KEY,
+        response: token,
+        remoteip: ip,
+      }),
+    })
+    if (!res.ok) return false
+    const data = await res.json() as { success: boolean }
+    return data.success === true
+  } catch {
+    return false
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -25,10 +30,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Verificación fallida' }, { status: 403 })
   }
 
-  if (
-    username !== (process.env.ADMIN_USERNAME ?? 'admin') ||
-    password !== process.env.ADMIN_PASSWORD
-  ) {
+  const validUser = username === (process.env.ADMIN_USERNAME ?? 'admin')
+  const validPass = verifyPassword(password)
+
+  if (!validUser || !validPass) {
     return NextResponse.json({ error: 'Credenciales incorrectas' }, { status: 401 })
   }
 

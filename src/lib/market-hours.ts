@@ -1,7 +1,7 @@
 // ⚙️ Cambiar a true para forzar polling cada 1 minuto (útil en desarrollo)
 export const FORCE_POLLING = false
 
-const TIMEZONE = 'America/Argentina/Buenos_Aires'
+export const TIMEZONE = 'America/Argentina/Buenos_Aires'
 
 function ahoraEnArgentina(): Date {
   return new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE }))

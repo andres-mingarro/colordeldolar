@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
+import { secret } from '@/lib/auth'
 
 const PUBLIC_PATHS = ['/admin/login', '/api/admin/login']
-
-function secret() {
-  return new TextEncoder().encode(
-    process.env.ADMIN_SECRET ?? 'dev-secret-change-in-production'
-  )
-}
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl

@@ -1,9 +1,19 @@
 import { SignJWT, jwtVerify } from 'jose'
+import { timingSafeEqual } from 'crypto'
 
-function secret() {
-  return new TextEncoder().encode(
-    process.env.ADMIN_SECRET ?? 'dev-secret-change-in-production'
-  )
+export function secret() {
+  const s = process.env.ADMIN_SECRET
+  if (!s) throw new Error('ADMIN_SECRET no está definido')
+  return new TextEncoder().encode(s)
+}
+
+export function verifyPassword(input: string): boolean {
+  const stored = process.env.ADMIN_PASSWORD
+  if (!stored) throw new Error('ADMIN_PASSWORD no está definido')
+  const a = Buffer.from(input)
+  const b = Buffer.from(stored)
+  if (a.length !== b.length) return false
+  return timingSafeEqual(a, b)
 }
 
 export async function createAdminToken(): Promise<string> {

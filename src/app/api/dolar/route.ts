@@ -3,8 +3,24 @@ import { sql, eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { cotizacionesDiarias, configuracion } from '@/db/schema'
 import { fechaHoyAR } from '@/lib/fecha'
-import { esDespuesCierre } from '@/lib/market-hours'
+import { esDespuesCierre, TIMEZONE } from '@/lib/market-hours'
 import { buildTweetText, postTweet } from '@/lib/twitter'
+
+let configCache: { data: Record<string, string>; ts: number } | null = null
+const CONFIG_TTL = 30_000 // 30 segundos
+
+async function getConfig(): Promise<Record<string, string>> {
+  const now = Date.now()
+  if (configCache && now - configCache.ts < CONFIG_TTL) return configCache.data
+  const rows = await db.select().from(configuracion)
+  const data = Object.fromEntries(rows.map(r => [r.clave, r.valor]))
+  configCache = { data, ts: now }
+  return data
+}
+
+export function invalidateConfigCache() {
+  configCache = null
+}
 
 export async function GET() {
   const [blueRes, oficialRes] = await Promise.all([
@@ -33,7 +49,7 @@ export async function GET() {
 
   // Primer insert del día → guarda apertura y cierre con el mismo valor.
   // Inserts siguientes → solo actualiza cierre (apertura queda intacta).
-  db.insert(cotizacionesDiarias)
+  await db.insert(cotizacionesDiarias)
     .values([
       {
         tipo: 'blue',
@@ -79,11 +95,10 @@ async function postearEnX({
   esApertura: boolean
   fecha: string
 }) {
-  const configRows = await db.select().from(configuracion)
-  const cfg = Object.fromEntries(configRows.map(r => [r.clave, r.valor]))
+  const cfg = await getConfig()
 
   const time = new Date().toLocaleTimeString('es-AR', {
-    timeZone: 'America/Argentina/Buenos_Aires',
+    timeZone: TIMEZONE,
     hour: '2-digit',
     minute: '2-digit',
   })
@@ -107,13 +122,21 @@ async function postearEnX({
     cfg.x_msg_cierre &&
     cfg.x_cierre_posted !== fecha
   ) {
-    await postTweet(buildTweetText(cfg.x_msg_cierre, vars))
-    await db
+    // Marcar como posteado ANTES de postear para evitar race condition.
+    // Si dos requests llegan a la vez, solo el primero en hacer el upsert
+    // con valor distinto "gana" — el segundo leerá la config actualizada.
+    const updated = await db
       .insert(configuracion)
       .values({ clave: 'x_cierre_posted', valor: fecha })
       .onConflictDoUpdate({
         target: configuracion.clave,
-        set: { valor: sql`excluded.valor` },
+        set: { valor: sql`CASE WHEN ${configuracion.valor} != excluded.valor THEN excluded.valor ELSE ${configuracion.valor} END` },
       })
+      .returning()
+
+    const fueActualizado = updated.some(r => r.valor === fecha && cfg.x_cierre_posted !== fecha)
+    if (fueActualizado) {
+      await postTweet(buildTweetText(cfg.x_msg_cierre, vars))
+    }
   }
 }

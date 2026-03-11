@@ -42,7 +42,7 @@ export default async function AdminPage() {
     <AdminDashboard
       cotizaciones={cotizacionesHoy}
       pollingActivo={cfg.polling_activo !== 'false'}
-      pollingIntervalo={Number(cfg.polling_intervalo ?? '1')}
+      pollingIntervalo={Math.max(1, parseInt(cfg.polling_intervalo ?? '1', 10) || 1)}
       mercadoHoraApertura={cfg.mercado_hora_apertura ?? '10:00'}
       mercadoHoraCierre={cfg.mercado_hora_cierre ?? '18:00'}
       xPostApertura={cfg.x_post_apertura === 'true'}

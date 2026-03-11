@@ -3,6 +3,7 @@ import { verifyAdminToken } from '@/lib/auth'
 import { generarImagenDolar } from '@/lib/imagen-dolar'
 import { subirImagenDrive } from '@/lib/drive'
 import { fechaHoyAR } from '@/lib/fecha'
+import { TIMEZONE } from '@/lib/market-hours'
 
 const DIAS = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
 
   const buffer = await generarImagenDolar({ blue, oficial, fecha })
 
-  const dia = DIAS[new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' })).getDay()]
+  const dia = DIAS[new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE })).getDay()]
   const nombre = `${dia}.png`
 
   await subirImagenDrive(buffer, nombre)
