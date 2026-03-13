@@ -9,8 +9,8 @@ import { TIMEZONE } from '@/lib/market-hours'
 
 const DIAS = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']
 
-// Ventana en minutos dentro de la cual se genera la imagen luego de la apertura
-const MINUTOS_DESPUES_APERTURA = 10
+// Ventana en minutos dentro de la cual se acepta la ejecución del cron
+const MINUTOS_DESPUES = 10
 const VENTANA_MINUTOS = 6
 
 export async function GET(req: NextRequest) {
@@ -30,26 +30,36 @@ export async function GET(req: NextRequest) {
   const cfg = Object.fromEntries(rows.map(r => [r.clave, r.valor]))
 
   const horaApertura = cfg.mercado_hora_apertura ?? '09:00'
-  const ultimaGeneracion = cfg.imagen_ultima_generacion ?? ''
+  const horaCierre = cfg.mercado_hora_cierre ?? '18:00'
 
-  // Fecha de hoy en AR (YYYY-MM-DD)
   const fechaHoy = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`
-
-  if (ultimaGeneracion === fechaHoy) {
-    return NextResponse.json({ skip: 'ya generada hoy' })
-  }
+  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes()
 
   const [hA, mA] = horaApertura.split(':').map(Number)
   const minutosApertura = (hA ?? 9) * 60 + (mA ?? 0)
-  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes()
   const minutosDesdeApertura = minutosAhora - minutosApertura
 
-  if (minutosDesdeApertura < MINUTOS_DESPUES_APERTURA || minutosDesdeApertura > MINUTOS_DESPUES_APERTURA + VENTANA_MINUTOS) {
+  const [hC, mC] = horaCierre.split(':').map(Number)
+  const minutosCierre = (hC ?? 18) * 60 + (mC ?? 0)
+  const minutosDeadeCierre = minutosAhora - minutosCierre
+
+  const esVentanaInicio = minutosDesdeApertura >= MINUTOS_DESPUES && minutosDesdeApertura <= MINUTOS_DESPUES + VENTANA_MINUTOS
+  const esVentanaCierre = minutosDeadeCierre >= MINUTOS_DESPUES && minutosDeadeCierre <= MINUTOS_DESPUES + VENTANA_MINUTOS
+
+  if (!esVentanaInicio && !esVentanaCierre) {
     return NextResponse.json({
-      skip: `fuera de ventana`,
+      skip: 'fuera de ventana',
       minutosDesdeApertura,
-      ventana: `${MINUTOS_DESPUES_APERTURA}–${MINUTOS_DESPUES_APERTURA + VENTANA_MINUTOS}`,
+      minutosDeadeCierre,
+      ventana: `${MINUTOS_DESPUES}–${MINUTOS_DESPUES + VENTANA_MINUTOS} min después de apertura o cierre`,
     })
+  }
+
+  const tipo = esVentanaInicio ? 'inicio' : 'final'
+  const guardKey = tipo === 'inicio' ? 'imagen_ultima_generacion' : 'imagen_cierre_ultima_generacion'
+
+  if (cfg[guardKey] === fechaHoy) {
+    return NextResponse.json({ skip: `ya generada hoy (${tipo})` })
   }
 
   const [blueRes, oficialRes] = await Promise.all([
@@ -66,17 +76,17 @@ export async function GET(req: NextRequest) {
   const fecha = fechaHoyAR()
 
   const buffer = await generarImagenDolar({ blue, oficial, fecha })
-  const nombre = `${DIAS[dia]}-inicio.png`
+  const nombre = `${DIAS[dia]}-${tipo}.png`
 
   await subirImagenDrive(buffer, nombre)
 
   await db
     .insert(configuracion)
-    .values([{ clave: 'imagen_ultima_generacion', valor: fechaHoy }])
+    .values([{ clave: guardKey, valor: fechaHoy }])
     .onConflictDoUpdate({
       target: configuracion.clave,
       set: { valor: sql`excluded.valor` },
     })
 
-  return NextResponse.json({ ok: true, nombre, fecha: fechaHoy })
+  return NextResponse.json({ ok: true, nombre, tipo, fecha: fechaHoy })
 }
