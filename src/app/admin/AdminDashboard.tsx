@@ -76,11 +76,15 @@ export default function AdminDashboard({
   const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string; driveUrl: string } | null>(null)
   const [errorImagen, setErrorImagen] = useState(false)
 
-  async function generarImagen() {
+  async function generarImagen(tipo: 'inicio' | 'final') {
     setGenerandoImagen(true)
     setImagenGenerada(null)
     setErrorImagen(false)
-    const res = await fetch('/api/admin/imagen', { method: 'POST' })
+    const res = await fetch('/api/admin/imagen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tipo }),
+    })
     setGenerandoImagen(false)
     if (res.ok) {
       const data = await res.json()
@@ -226,12 +230,20 @@ export default function AdminDashboard({
             <CardContent className="flex flex-col gap-4">
               <div className="flex gap-3">
                 <Button
-                  onClick={generarImagen}
+                  onClick={() => generarImagen('inicio')}
                   disabled={generandoImagen}
                   variant="secondary"
                   className="flex-1"
                 >
-                  {generandoImagen ? 'Generando…' : 'Generar imagen'}
+                  {generandoImagen ? 'Generando…' : 'Imagen apertura'}
+                </Button>
+                <Button
+                  onClick={() => generarImagen('final')}
+                  disabled={generandoImagen}
+                  variant="secondary"
+                  className="flex-1"
+                >
+                  {generandoImagen ? 'Generando…' : 'Imagen cierre'}
                 </Button>
                 <Button variant="secondary" className="flex-1" asChild>
                   <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer">

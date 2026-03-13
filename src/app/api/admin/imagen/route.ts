@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
+  const body = await req.json().catch(() => ({}))
+  const tipo: 'inicio' | 'final' = body.tipo === 'inicio' ? 'inicio' : 'final'
+
   const [blueRes, oficialRes] = await Promise.all([
     fetch('https://dolarapi.com/v1/dolares/blue', { cache: 'no-store' }),
     fetch('https://dolarapi.com/v1/dolares/oficial', { cache: 'no-store' }),
@@ -29,7 +32,7 @@ export async function POST(req: NextRequest) {
   const buffer = await generarImagenDolar({ blue, oficial, fecha })
 
   const dia = DIAS[new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE })).getDay()]
-  const nombre = `${dia}-final.png`
+  const nombre = `${dia}-${tipo}.png`
 
   await subirImagenDrive(buffer, nombre)
 
