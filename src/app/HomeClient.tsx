@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import DolarValue from '@/components/dolar-value'
 import ThemeToggle from '@/components/ThemeToggle'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
-import styles from './page.module.scss'
+import { cn } from '@/lib/utils'
 
 interface DolarData {
   compra: number
@@ -104,14 +104,14 @@ export default function HomeClient({ initialData }: Props) {
   const dotActive = FORCE_POLLING || (pollingActivo && mercadoAbierto)
 
   return (
-    <main className={styles.container}>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-background gap-10 px-4">
       <ThemeToggle style={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-      <h1 className={styles.title}>💵 Color del Dólar</h1>
+      <h1 className="text-2xl font-bold tracking-tight">💵 Color del Dólar</h1>
 
       {cargando ? (
-        <p className={styles.loading}>Cargando valores...</p>
+        <p className="text-lg text-muted-foreground animate-pulse">Cargando valores...</p>
       ) : data ? (
-        <div className={styles.cardsWrapper}>
+        <div className="flex flex-col sm:flex-row items-center gap-6">
           <DolarValue
             titulo="Dólar Blue"
             compra={data.blue.compra}
@@ -126,13 +126,16 @@ export default function HomeClient({ initialData }: Props) {
           />
         </div>
       ) : (
-        <p className={styles.error}>Error al cargar los valores.</p>
+        <p className="text-destructive">Error al cargar los valores.</p>
       )}
 
-      <div className={styles.status}>
-        <div className={styles.statusRow}>
-          <span className={`${styles.statusDot} ${dotActive ? styles.statusDotActive : ''}`} />
-          <span className={styles.statusText}>
+      <div className="flex flex-col items-center gap-1">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn('size-2 rounded-full', dotActive && 'animate-pulse')}
+            style={{ background: dotActive ? 'var(--dot-active)' : 'var(--dot-inactive)' }}
+          />
+          <span className="text-xs text-muted-foreground">
             {FORCE_POLLING
               ? 'Actualización forzada 24/7 (desarrollo)'
               : !pollingActivo
@@ -143,7 +146,9 @@ export default function HomeClient({ initialData }: Props) {
           </span>
         </div>
         {ultimaActualizacion && (
-          <p className={styles.lastUpdate}>Última actualización: {ultimaActualizacion}</p>
+          <p className="text-xs" style={{ color: 'var(--dimmer)' }}>
+            Última actualización: {ultimaActualizacion}
+          </p>
         )}
       </div>
     </main>
