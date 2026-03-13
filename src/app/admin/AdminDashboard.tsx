@@ -3,8 +3,23 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CotizacionDiaria } from '@/db/schema'
-import styles from './page.module.scss'
 import ThemeToggle from '@/components/ThemeToggle'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 interface Props {
   cotizaciones: CotizacionDiaria[]
@@ -42,7 +57,6 @@ export default function AdminDashboard({
   driveFolderUrl,
 }: Props) {
   const router = useRouter()
-  const [tab, setTab] = useState<'configuracion' | 'x' | 'cotizaciones' | 'instagram'>('configuracion')
 
   const [activo, setActivo] = useState(pollingActivo)
   const [intervalo, setIntervalo] = useState(pollingIntervalo)
@@ -115,226 +129,243 @@ export default function AdminDashboard({
   }
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Panel Admin</h1>
-        <div className={styles.headerActions}>
-          <a href="/" target="_blank" rel="noopener noreferrer" className={styles.logoutBtn}>Home</a>
+    <div className="min-h-screen bg-background text-foreground flex flex-col max-w-3xl mx-auto px-4 py-6 gap-6">
+
+      {/* Header */}
+      <header className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Panel Admin</h1>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" asChild>
+            <a href="/" target="_blank" rel="noopener noreferrer">Home</a>
+          </Button>
           <ThemeToggle />
-          <button onClick={logout} className={styles.logoutBtn}>Cerrar sesión</button>
+          <Button variant="outline" size="sm" onClick={logout}>
+            Cerrar sesión
+          </Button>
         </div>
       </header>
 
-      <nav className={styles.tabs}>
-        <button
-          className={`${styles.tab} ${tab === 'configuracion' ? styles.tabActive : ''}`}
-          onClick={() => setTab('configuracion')}
-        >
-          Configuración
-        </button>
-        <button
-          className={`${styles.tab} ${tab === 'instagram' ? styles.tabActive : ''}`}
-          onClick={() => setTab('instagram')}
-        >
-          Instagram
-        </button>
-        <button
-          className={`${styles.tab} ${tab === 'x' ? styles.tabActive : ''}`}
-          onClick={() => setTab('x')}
-        >
-          Opciones de X
-        </button>
-        <button
-          className={`${styles.tab} ${tab === 'cotizaciones' ? styles.tabActive : ''}`}
-          onClick={() => setTab('cotizaciones')}
-        >
-          Cotizaciones de hoy
-        </button>
-      </nav>
+      {/* Tabs */}
+      <Tabs defaultValue="configuracion" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="configuracion" className="flex-1">Configuración</TabsTrigger>
+          <TabsTrigger value="instagram" className="flex-1">Instagram</TabsTrigger>
+          <TabsTrigger value="x" className="flex-1">Opciones de X</TabsTrigger>
+          <TabsTrigger value="cotizaciones" className="flex-1">Cotizaciones</TabsTrigger>
+        </TabsList>
 
-      {/* ── Configuración de actualización ── */}
-      {tab === 'configuracion' && <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Configuración general</h2>
-        <form onSubmit={guardarPolling} className={styles.configForm}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              checked={activo}
-              onChange={e => setActivo(e.target.checked)}
-              className={styles.checkbox}
-            />
-            Activar actualización automática
-          </label>
+        {/* ── Configuración ── */}
+        <TabsContent value="configuracion">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configuración general</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={guardarPolling} className="flex flex-col gap-5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="polling-activo">Actualización automática</Label>
+                  <Switch
+                    id="polling-activo"
+                    checked={activo}
+                    onCheckedChange={setActivo}
+                  />
+                </div>
 
-          <label className={styles.fieldLabel}>
-            Intervalo (minutos)
-            <input
-              type="number"
-              min={1}
-              max={60}
-              value={intervalo}
-              disabled={!activo}
-              onChange={e => setIntervalo(Number(e.target.value))}
-              className={styles.numberInput}
-            />
-          </label>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="intervalo">Intervalo (minutos)</Label>
+                  <Input
+                    id="intervalo"
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={intervalo}
+                    disabled={!activo}
+                    onChange={e => setIntervalo(Number(e.target.value))}
+                    className="max-w-32"
+                  />
+                </div>
 
-          <div className={styles.subGroup}>
-            <p className={styles.subGroupTitle}>Mercado</p>
-            <div className={styles.horasRow}>
-              <label className={styles.fieldLabel}>
-                Hora de apertura
-                <input
-                  type="time"
-                  value={horaApertura}
-                  onChange={e => setHoraApertura(e.target.value)}
-                  className={styles.numberInput}
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                Hora de cierre
-                <input
-                  type="time"
-                  value={horaCierre}
-                  onChange={e => setHoraCierre(e.target.value)}
-                  className={styles.numberInput}
-                />
-              </label>
-            </div>
-          </div>
+                <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
+                  <p className="text-sm font-medium">Mercado</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <Label htmlFor="hora-apertura">Hora de apertura</Label>
+                      <Input
+                        id="hora-apertura"
+                        type="time"
+                        value={horaApertura}
+                        onChange={e => setHoraApertura(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <Label htmlFor="hora-cierre">Hora de cierre</Label>
+                      <Input
+                        id="hora-cierre"
+                        type="time"
+                        value={horaCierre}
+                        onChange={e => setHoraCierre(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
 
-          <button type="submit" disabled={guardandoPolling} className={styles.saveBtn}>
-            {guardandoPolling ? 'Guardando…' : guardadoPolling ? '✓ Guardado' : 'Guardar'}
-          </button>
-        </form>
+                <Button type="submit" disabled={guardandoPolling} className="w-full">
+                  {guardandoPolling ? 'Guardando…' : guardadoPolling ? '✓ Guardado' : 'Guardar'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      </section>}
+        {/* ── Instagram ── */}
+        <TabsContent value="instagram">
+          <Card>
+            <CardHeader>
+              <CardTitle>Imagen para Instagram</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div className="flex gap-3">
+                <Button
+                  onClick={generarImagen}
+                  disabled={generandoImagen}
+                  variant="secondary"
+                  className="flex-1"
+                >
+                  {generandoImagen ? 'Generando…' : 'Generar imagen'}
+                </Button>
+                <Button variant="secondary" className="flex-1" asChild>
+                  <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer">
+                    Ver carpeta en Drive
+                  </a>
+                </Button>
+              </div>
 
-      {/* ── Opciones de X ── */}
-      {tab === 'x' && <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Opciones de X</h2>
-        <p className={styles.xHint}>
-          Variables disponibles: <code>[blueCompra]</code> <code>[blueVenta]</code>{' '}
-          <code>[oficialCompra]</code> <code>[oficialVenta]</code> <code>[time]</code> <code>[fecha]</code>
-        </p>
-        <form onSubmit={guardarX} className={styles.xForm}>
-          <div className={styles.xBlock}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={xApertura}
-                onChange={e => setXApertura(e.target.checked)}
-                className={styles.checkbox}
-              />
-              Post de apertura
-            </label>
-            <textarea
-              value={msgApertura}
-              onChange={e => setMsgApertura(e.target.value)}
-              disabled={!xApertura}
-              rows={10}
-              className={styles.textarea}
-            />
-          </div>
+              {imagenGenerada && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm text-green-500">✓ Imagen subida: {imagenGenerada.nombre}</p>
+                  <img
+                    src={`data:image/png;base64,${imagenGenerada.preview}`}
+                    alt="Preview"
+                    className="w-full rounded-lg border border-border"
+                  />
+                </div>
+              )}
+              {errorImagen && (
+                <p className="text-sm text-destructive">Error al generar la imagen.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <div className={styles.xBlock}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={xCierre}
-                onChange={e => setXCierre(e.target.checked)}
-                className={styles.checkbox}
-              />
-              Post de cierre
-            </label>
-            <textarea
-              value={msgCierre}
-              onChange={e => setMsgCierre(e.target.value)}
-              disabled={!xCierre}
-              rows={10}
-              className={styles.textarea}
-            />
-          </div>
+        {/* ── Opciones de X ── */}
+        <TabsContent value="x">
+          <Card>
+            <CardHeader>
+              <CardTitle>Opciones de X</CardTitle>
+              <CardDescription>
+                Variables:{' '}
+                {['[blueCompra]', '[blueVenta]', '[oficialCompra]', '[oficialVenta]', '[time]', '[fecha]'].map(v => (
+                  <code key={v} className="mx-0.5 rounded bg-muted px-1 py-0.5 text-xs font-mono">{v}</code>
+                ))}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={guardarX} className="flex flex-col gap-5">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="x-apertura">Post de apertura</Label>
+                    <Switch
+                      id="x-apertura"
+                      checked={xApertura}
+                      onCheckedChange={setXApertura}
+                    />
+                  </div>
+                  <Textarea
+                    value={msgApertura}
+                    onChange={e => setMsgApertura(e.target.value)}
+                    disabled={!xApertura}
+                    rows={10}
+                    className="font-mono text-sm"
+                  />
+                </div>
 
-          <button type="submit" disabled={guardandoX} className={styles.saveBtn}>
-            {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
-          </button>
-        </form>
-      </section>}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="x-cierre">Post de cierre</Label>
+                    <Switch
+                      id="x-cierre"
+                      checked={xCierre}
+                      onCheckedChange={setXCierre}
+                    />
+                  </div>
+                  <Textarea
+                    value={msgCierre}
+                    onChange={e => setMsgCierre(e.target.value)}
+                    disabled={!xCierre}
+                    rows={10}
+                    className="font-mono text-sm"
+                  />
+                </div>
 
-      {/* ── Instagram ── */}
-      {tab === 'instagram' && <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Imagen para Instagram</h2>
-        <div className={styles.imagenSection}>
-          <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
-            <button
-              onClick={generarImagen}
-              disabled={generandoImagen}
-              className={styles.imagenBtn}
-              style={{ flex: 1 }}
-            >
-              {generandoImagen ? 'Generando…' : 'Generar imagen'}
-            </button>
-            <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer" className={styles.imagenBtn} style={{ flex: 1, textAlign: 'center' }}>
-              Ver carpeta en Drive
-            </a>
-          </div>
-          {imagenGenerada && (
-            <div>
-              <p className={styles.imagenOk}>✓ Imagen subida: {imagenGenerada.nombre}</p>
-              <img
-                src={`data:image/png;base64,${imagenGenerada.preview}`}
-                alt="Preview"
-                className={styles.imagenPreview}
-              />
-            </div>
-          )}
-          {errorImagen && (
-            <p className={styles.imagenError}>Error al generar la imagen.</p>
-          )}
-        </div>
-      </section>}
+                <Button type="submit" disabled={guardandoX} className="w-full">
+                  {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* ── Cotizaciones de hoy ── */}
-      {tab === 'cotizaciones' && <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Cotizaciones de hoy</h2>
-        <p className={styles.xHint}>Valores de apertura y cierre registrados hoy para el dólar Blue y Oficial. La variación compara el precio de venta al cierre vs. la apertura.</p>
-        {cotizaciones.length === 0 ? (
-          <p className={styles.emptyMsg}>Sin datos por hoy.</p>
-        ) : (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Apertura compra</th>
-                  <th>Apertura venta</th>
-                  <th>Cierre compra</th>
-                  <th>Cierre venta</th>
-                  <th>Variación venta</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cotizaciones.map(c => {
-                  const v = variacion(c.aperturaVenta, c.cierreVenta)
-                  return (
-                    <tr key={c.tipo}>
-                      <td className={styles.tipoBadge}>{c.tipo}</td>
-                      <td>${Number(c.aperturaCompra).toLocaleString('es-AR')}</td>
-                      <td>${Number(c.aperturaVenta).toLocaleString('es-AR')}</td>
-                      <td>${Number(c.cierreCompra).toLocaleString('es-AR')}</td>
-                      <td>${Number(c.cierreVenta).toLocaleString('es-AR')}</td>
-                      <td className={v ? (v.positivo ? styles.varPos : styles.varNeg) : styles.varNeutral}>
-                        {v ? v.label : '—'}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>}
+        {/* ── Cotizaciones de hoy ── */}
+        <TabsContent value="cotizaciones">
+          <Card>
+            <CardHeader>
+              <CardTitle>Cotizaciones de hoy</CardTitle>
+              <CardDescription>
+                Valores de apertura y cierre registrados hoy. La variación compara el precio de venta al cierre vs. la apertura.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {cotizaciones.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Sin datos por hoy.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Ap. compra</TableHead>
+                        <TableHead>Ap. venta</TableHead>
+                        <TableHead>Ci. compra</TableHead>
+                        <TableHead>Ci. venta</TableHead>
+                        <TableHead>Variación</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {cotizaciones.map(c => {
+                        const v = variacion(c.aperturaVenta, c.cierreVenta)
+                        return (
+                          <TableRow key={c.tipo}>
+                            <TableCell>
+                              <Badge variant="outline" className="capitalize">{c.tipo}</Badge>
+                            </TableCell>
+                            <TableCell>${Number(c.aperturaCompra).toLocaleString('es-AR')}</TableCell>
+                            <TableCell>${Number(c.aperturaVenta).toLocaleString('es-AR')}</TableCell>
+                            <TableCell>${Number(c.cierreCompra).toLocaleString('es-AR')}</TableCell>
+                            <TableCell>${Number(c.cierreVenta).toLocaleString('es-AR')}</TableCell>
+                            <TableCell className={v ? (v.positivo ? 'text-green-500' : 'text-destructive') : 'text-muted-foreground'}>
+                              {v ? v.label : '—'}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

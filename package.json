@@ -13,14 +13,19 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@resvg/resvg-js": "^2.6.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "googleapis": "^171.4.0",
     "jose": "^6.2.1",
+    "lucide-react": "^0.577.0",
     "next": "16.1.6",
+    "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "satori": "^0.25.0",
+    "tailwind-merge": "^3.5.0",
     "twitter-api-v2": "^1.29.0"
   },
   "devDependencies": {

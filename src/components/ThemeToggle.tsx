@@ -15,6 +15,7 @@ export default function ThemeToggle({ style }: { style?: React.CSSProperties }) 
   function toggle() {
     const next = theme === 'dark' ? 'light' : 'dark'
     document.documentElement.setAttribute('data-theme', next)
+    document.documentElement.classList.toggle('dark', next === 'dark')
     localStorage.setItem('theme', next)
     setTheme(next)
   }
