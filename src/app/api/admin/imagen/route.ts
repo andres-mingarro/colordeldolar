@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   const buffer = await generarImagenDolar({ blue, oficial, fecha })
 
   const dia = DIAS[new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE })).getDay()]
-  const nombre = `${dia}.png`
+  const nombre = `${dia}-final.png`
 
   await subirImagenDrive(buffer, nombre)
 
