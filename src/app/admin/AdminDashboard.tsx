@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CotizacionDiaria } from '@/db/schema'
-import ThemeToggle from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -133,7 +132,7 @@ export default function AdminDashboard({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col max-w-3xl mx-auto px-4 py-6 gap-6">
+    <div className="bg-background text-foreground flex flex-col max-w-3xl mx-auto px-4 py-6 gap-6">
 
       {/* Header */}
       <header className="flex items-center justify-between">
@@ -142,7 +141,6 @@ export default function AdminDashboard({
           <Button variant="ghost" size="sm" asChild>
             <a href="/" target="_blank" rel="noopener noreferrer">Home</a>
           </Button>
-          <ThemeToggle />
           <Button variant="outline" size="sm" onClick={logout}>
             Cerrar sesión
           </Button>
