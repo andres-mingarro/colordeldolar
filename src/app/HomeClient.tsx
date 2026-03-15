@@ -21,6 +21,8 @@ interface Props {
 
 export default function HomeClient({ initialData }: Props) {
   const [data, setData] = useState<DolarResponse | null>(initialData)
+  const prevDataRef = useRef<DolarResponse | null>(null)
+  const [tendencia, setTendencia] = useState<{ blue: 'up' | 'down' | null; oficial: 'up' | 'down' | null }>({ blue: null, oficial: null })
   const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
   const [mercadoAbierto, setMercadoAbierto] = useState(false)
   const [cargando, setCargando] = useState(initialData === null)
@@ -37,7 +39,16 @@ export default function HomeClient({ initialData }: Props) {
   const fetchDolar = useCallback(async () => {
     try {
       const res = await fetch('/api/dolar')
-      const json = await res.json()
+      const json: DolarResponse = await res.json()
+      setTendencia(prev => {
+        const p = prevDataRef.current
+        if (!p) return prev
+        return {
+          blue:    json.blue.venta !== p.blue.venta       ? (json.blue.venta > p.blue.venta ? 'up' : 'down')         : prev.blue,
+          oficial: json.oficial.venta !== p.oficial.venta ? (json.oficial.venta > p.oficial.venta ? 'up' : 'down')   : prev.oficial,
+        }
+      })
+      prevDataRef.current = json
       setData(json)
       setUltimaActualizacion(new Date().toLocaleTimeString('es-AR'))
     } catch (e) {
@@ -114,12 +125,14 @@ export default function HomeClient({ initialData }: Props) {
             compra={data.blue.compra}
             venta={data.blue.venta}
             color="green"
+            tendencia={tendencia.blue}
           />
           <DolarValue
             titulo="Dólar Oficial"
             compra={data.oficial.compra}
             venta={data.oficial.venta}
             color="neutral"
+            tendencia={tendencia.oficial}
           />
         </div>
       ) : (
