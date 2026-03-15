@@ -7,14 +7,14 @@ export interface InflacionData {
   ultimos12Meses: number
 }
 
-export async function GET() {
+export async function fetchInflacionData(): Promise<InflacionData | null> {
   try {
     const [mensualRes, interanualRes] = await Promise.all([
       fetch('https://api.argentinadatos.com/v1/finanzas/indices/inflacion', { next: { revalidate: 3600 } }),
       fetch('https://api.argentinadatos.com/v1/finanzas/indices/inflacionInteranual', { next: { revalidate: 3600 } }),
     ])
 
-    if (!mensualRes.ok || !interanualRes.ok) return NextResponse.json(null, { status: 502 })
+    if (!mensualRes.ok || !interanualRes.ok) return null
 
     const mensual: { fecha: string; valor: number }[] = await mensualRes.json()
     const interanual: { fecha: string; valor: number }[] = await interanualRes.json()
@@ -22,7 +22,6 @@ export async function GET() {
     const mesActual   = mensual[mensual.length - 1]
     const mesAnterior = mensual[mensual.length - 2]
 
-    // Acumulado año actual: producto compuesto de los meses del año en curso
     const anioActual = new Date().getFullYear()
     const mesesAnio  = mensual.filter(m => m.fecha.startsWith(String(anioActual)))
     const acumuladoAnio = mesesAnio.length
@@ -31,8 +30,14 @@ export async function GET() {
 
     const ultimos12Meses = interanual[interanual.length - 1].valor
 
-    return NextResponse.json({ mesActual, mesAnterior, acumuladoAnio, ultimos12Meses } satisfies InflacionData)
+    return { mesActual, mesAnterior, acumuladoAnio, ultimos12Meses }
   } catch {
-    return NextResponse.json(null, { status: 500 })
+    return null
   }
+}
+
+export async function GET() {
+  const data = await fetchInflacionData()
+  if (!data) return NextResponse.json(null, { status: 502 })
+  return NextResponse.json(data)
 }
