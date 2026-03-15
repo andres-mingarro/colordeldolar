@@ -132,20 +132,14 @@ export default function AdminDashboard({
   }
 
   return (
-    <div className="bg-background text-foreground flex flex-col max-w-3xl mx-auto px-4 py-6 gap-6">
+    <div className="flex flex-col max-w-3xl mx-auto w-full px-4 py-6 gap-6">
 
-      {/* Header */}
-      <header className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Panel Admin</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild>
-            <a href="/" target="_blank" rel="noopener noreferrer">Home</a>
-          </Button>
-          <Button variant="outline" size="sm" onClick={logout}>
-            Cerrar sesión
-          </Button>
-        </div>
-      </header>
+        <Button variant="outline" size="sm" onClick={logout}>
+          Cerrar sesión
+        </Button>
+      </div>
 
       {/* Tabs */}
       <Tabs defaultValue="configuracion" className="w-full">

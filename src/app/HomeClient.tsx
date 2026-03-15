@@ -1,9 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import DolarValue from '@/components/dolar-value'
-import Footer from '@/components/Footer'
-import Header from '@/components/Header'
+import DolarValue from '@/components/DolarValue/dolar-value'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
 import { cn } from '@/lib/utils'
 
@@ -105,9 +103,7 @@ export default function HomeClient({ initialData }: Props) {
   const dotActive = FORCE_POLLING || (pollingActivo && mercadoAbierto)
 
   return (
-    <main className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="flex-1 flex flex-col items-center justify-center gap-10 px-4 py-12">
+    <div className="flex flex-1 flex-col items-center justify-center gap-10 px-4 py-12">
 
       {cargando ? (
         <p className="text-lg text-muted-foreground animate-pulse">Cargando valores...</p>
@@ -152,8 +148,6 @@ export default function HomeClient({ initialData }: Props) {
           </p>
         )}
       </div>
-      </div>
-      <Footer />
-    </main>
+    </div>
   )
 }

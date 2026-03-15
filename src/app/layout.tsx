@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Script from "next/script";
+import PageLayout from "@/components/PageLayout/PageLayout";
 import "./globals.css";
 import "./globals.scss";
 
@@ -58,7 +59,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} antialiased`}
+        className={`${geistSans.variable} antialiased flex flex-col min-h-screen`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-2RXYPHQLE2"
@@ -72,7 +73,7 @@ export default function RootLayout({
             gtag('config', 'G-2RXYPHQLE2');
           `}
         </Script>
-        {children}
+        <PageLayout>{children}</PageLayout>
       </body>
     </html>
   );

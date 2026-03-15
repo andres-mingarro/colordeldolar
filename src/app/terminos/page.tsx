@@ -1,8 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import Logo from '@/components/Logo'
-import ThemeToggle from '@/components/ThemeToggle'
-import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Términos y condiciones — Color del Dólar',
@@ -12,13 +8,7 @@ export const metadata: Metadata = {
 
 export default function TerminosPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-background">
-      <ThemeToggle style={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-
-      <div className="flex-1 w-full max-w-2xl mx-auto px-6 py-16">
-        <Link href="/" className="block mb-10">
-          <Logo width={160} />
-        </Link>
+    <div className="w-full max-w-2xl mx-auto px-6 py-16">
 
         <h1 className="text-xl font-semibold mb-1" style={{ color: 'var(--fg)' }}>
           Términos y condiciones
@@ -122,9 +112,6 @@ export default function TerminosPage() {
           </section>
 
         </div>
-      </div>
-
-      <Footer />
-    </main>
+    </div>
   )
 }

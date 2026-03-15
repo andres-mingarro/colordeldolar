@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import Logo from './Logo'
-import SocialIcons from './SocialIcons'
-import ThemeToggle from './ThemeToggle'
+import Logo from '@/components/Logo/Logo'
+import SocialIcons from '@/components/SocialIcons/SocialIcons'
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import styles from './Header.module.scss'
 
 export default function Header() {
