@@ -1,0 +1,29 @@
+@use '../../styles/variables' as *;
+
+@mixin container-base($size: 'default') {
+  margin: 0 auto;
+  padding: 0 $gap-x3;
+  box-sizing: border-box;
+  width: 100%;
+
+  @if $size == 'default' { max-width: $max-container; }
+  @if $size == 'medium'  { max-width: $max-container-medium; }
+  @if $size == 'small'   { max-width: $max-container-small; }
+}
+
+.container,
+.container-medium,
+.container-small,
+.container-full {
+  width: 100%;
+}
+
+.container .container-inner        { @include container-base('default'); }
+.container-medium .container-inner { @include container-base('medium'); }
+.container-small .container-inner  { @include container-base('small'); }
+.container-full .container-inner   { width: 100%; padding: 0; }
+
+.no-padding {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

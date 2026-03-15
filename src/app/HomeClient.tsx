@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DolarValue from '@/components/DolarValue/dolar-value'
+import Inflacion from '@/components/Inflacion/Inflacion'
+import PollingStatus from '@/components/PollingStatus/PollingStatus'
+import Container from '@/components/Container/Container'
+import type { InflacionData } from '@/app/api/inflacion/route'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
-import { cn } from '@/lib/utils'
 
 interface DolarData {
   compra: number
@@ -17,9 +20,10 @@ interface DolarResponse {
 
 interface Props {
   initialData: DolarResponse | null
+  inflacion: InflacionData | null
 }
 
-export default function HomeClient({ initialData }: Props) {
+export default function HomeClient({ initialData, inflacion }: Props) {
   const [data, setData] = useState<DolarResponse | null>(initialData)
   const prevDataRef = useRef<DolarResponse | null>(null)
   const [tendencia, setTendencia] = useState<{ blue: 'up' | 'down' | null; oficial: 'up' | 'down' | null }>({ blue: null, oficial: null })
@@ -114,12 +118,11 @@ export default function HomeClient({ initialData }: Props) {
   const dotActive = FORCE_POLLING || (pollingActivo && mercadoAbierto)
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-10 px-4 py-12">
-
+    <>
       {cargando ? (
         <p className="text-lg text-muted-foreground animate-pulse">Cargando valores...</p>
       ) : data ? (
-        <div className="flex flex-col sm:flex-row items-center gap-6">
+        <Container tag="div" size="medium" classNameInner="flex flex-col sm:flex-row items-center gap-6">
           <DolarValue
             titulo="Dólar Blue"
             compra={data.blue.compra}
@@ -134,33 +137,21 @@ export default function HomeClient({ initialData }: Props) {
             color="neutral"
             tendencia={tendencia.oficial}
           />
-        </div>
+        </Container>
       ) : (
         <p className="text-destructive">Error al cargar los valores.</p>
       )}
 
-      <div className="flex flex-col items-center gap-1">
-        <div className="flex items-center gap-2">
-          <span
-            className={cn('size-2 rounded-full', dotActive && 'animate-pulse')}
-            style={{ background: dotActive ? 'var(--dot-active)' : 'var(--dot-inactive)' }}
-          />
-          <span className="text-xs text-muted-foreground">
-            {FORCE_POLLING
-              ? 'Actualización forzada 24/7 (desarrollo)'
-              : !pollingActivo
-              ? 'Actualización desactivada'
-              : mercadoAbierto
-              ? `Mercado abierto · actualizando cada ${pollingIntervaloMs / 60_000} min`
-              : 'Mercado cerrado · sin actualización automática'}
-          </span>
-        </div>
-        {ultimaActualizacion && (
-          <p className="text-xs" style={{ color: 'var(--dimmer)' }}>
-            Última actualización: {ultimaActualizacion}
-          </p>
-        )}
-      </div>
-    </div>
+      {inflacion && <Inflacion data={inflacion} />}
+
+      <PollingStatus
+        dotActive={dotActive}
+        pollingActivo={pollingActivo}
+        mercadoAbierto={mercadoAbierto}
+        pollingIntervaloMs={pollingIntervaloMs}
+        ultimaActualizacion={ultimaActualizacion}
+        forcePoll={FORCE_POLLING}
+      />
+    </>
   )
 }

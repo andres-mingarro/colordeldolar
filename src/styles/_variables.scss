@@ -1,3 +1,10 @@
+// ─── Layout ───────────────────────────────────────────────────────────────────
+
+$max-container:        1280px;
+$max-container-medium: 1024px;
+$max-container-small:  768px;
+$gap-x3:               1.5rem;
+
 // ─── Typography ───────────────────────────────────────────────────────────────
 
 $font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;

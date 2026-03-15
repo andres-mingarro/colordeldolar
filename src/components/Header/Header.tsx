@@ -6,7 +6,7 @@ import styles from './Header.module.scss'
 
 export default function Header() {
   return (
-    <header className={styles.header}>
+    <header className={`mb-9 ${styles.header}`}>
       <div className={styles.logoWrap}>
         <Link href="/" aria-label="Ir al inicio">
           <Logo />

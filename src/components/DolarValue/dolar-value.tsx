@@ -1,4 +1,5 @@
 import Trend from '@/components/Trend/Trend'
+import Card from '@/components/Card/Card'
 
 type ColorVariant = 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'neutral'
 
@@ -14,8 +15,8 @@ interface DolarValueProps {
 
 export default function DolarValue({ titulo, compra, venta, color = 'neutral', tendencia, dummyUp, dummyDown }: DolarValueProps) {
   return (
-    <div
-      className="flex flex-col items-center gap-4 rounded-2xl py-7 px-10 border"
+    <Card
+      className="flex flex-1 flex-col items-center gap-4 rounded-2xl py-7 px-10"
       style={{
         background: `var(--v-${color}-bg)`,
         borderColor: `var(--v-${color}-border)`,
@@ -49,6 +50,6 @@ export default function DolarValue({ titulo, compra, venta, color = 'neutral', t
           </span>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

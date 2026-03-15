@@ -1,4 +1,15 @@
 import HomeClient from './HomeClient'
+import type { InflacionData } from './api/inflacion/route'
+
+async function getInflacion(): Promise<InflacionData | null> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'}/api/inflacion`, { next: { revalidate: 3600 } })
+    if (!res.ok) return null
+    return res.json()
+  } catch {
+    return null
+  }
+}
 
 async function getInitialDolar() {
   try {
@@ -15,7 +26,7 @@ async function getInitialDolar() {
 }
 
 export default async function Home() {
-  const initialData = await getInitialDolar()
+  const [initialData, inflacion] = await Promise.all([getInitialDolar(), getInflacion()])
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -56,7 +67,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HomeClient initialData={initialData} />
+      <HomeClient initialData={initialData} inflacion={inflacion} />
     </>
   )
 }
