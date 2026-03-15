@@ -49,7 +49,7 @@
 
 /* ─── Variables shadcn — light ──────────────────────────────────────────── */
 [data-theme="light"] {
-  --background:        #f4f4f5;
+  --background:        #e6e6e6;
   --foreground:        #09090b;
   --card:              #ffffff;
   --card-foreground:   #09090b;
