@@ -16,7 +16,8 @@ interface DolarValueProps {
 export default function DolarValue({ titulo, compra, venta, color = 'neutral', tendencia, dummyUp, dummyDown }: DolarValueProps) {
   return (
     <Card
-      className="flex flex-1 flex-col items-center gap-4 rounded-2xl py-7 px-10"
+      className="dolar-value flex flex-1 flex-col items-center rounded-2xl"
+      padding="big"
       style={{
         background: `var(--v-${color}-bg)`,
         borderColor: `var(--v-${color}-border)`,

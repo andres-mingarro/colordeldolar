@@ -18,16 +18,17 @@ export default function Inflacion({ data }: Props) {
 
   return (
     <Container tag="div" size="medium" className="inflacion" classNameInner=" ">
-      <Card className="flex items-center gap-5 py-3 px-5">
+      <Card padding="small" className="flex gap-4 flex-col lg:flex-row items-start lg:items-center w-full">
         <span className="text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>
-          Inflación {anio}
+          Inflación {anio}:
         </span>
-        <Divider />
-        <Stat label={mesCapitalizado} valor={mesActual.valor} trend={<Trend valor={tendencia} />} />
-        <Divider />
-        <Stat label="Acumulado año" valor={acumuladoAnio} />
-        <Divider />
-        <Stat label="Últimos 12 meses" valor={ultimos12Meses} />
+        <div className="content-date flex flex-col lg:flex-row gap-4 mt-2 lg:mt-0 w-full lg:w-auto">
+          <Stat label={mesCapitalizado} valor={mesActual.valor} trend={<Trend valor={tendencia} />} />
+          <Divider />
+          <Stat label="Acumulado año" valor={acumuladoAnio} />
+          <Divider />
+          <Stat label="Últimos 12 meses" valor={ultimos12Meses} />
+        </div>
       </Card>
     </Container>
   )
@@ -46,5 +47,5 @@ function Stat({ label, valor, trend }: { label: string; valor: number; trend?: R
 }
 
 function Divider() {
-  return <span className="h-4 w-px self-center" style={{ background: 'var(--border-subtle)' }} />
+  return <span className="block h-px w-full lg:h-4 lg:w-px lg:self-center" style={{ background: 'var(--border-subtle)' }} />
 }

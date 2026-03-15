@@ -122,7 +122,7 @@ export default function HomeClient({ initialData, inflacion }: Props) {
       {cargando ? (
         <p className="text-lg text-muted-foreground animate-pulse">Cargando valores...</p>
       ) : data ? (
-        <Container tag="div" size="medium" classNameInner="flex flex-col sm:flex-row items-center gap-6">
+        <Container tag="div" size="medium" classNameInner="flex flex-col lg:flex-row items-center gap-6 w-full">
           <DolarValue
             titulo="Dólar Blue"
             compra={data.blue.compra}
