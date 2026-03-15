@@ -1,0 +1,28 @@
+.header {
+  width: 100%;
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.875rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.logoWrap {
+  grid-column: 2;
+  line-height: 0;
+}
+
+.right {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.875rem;
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  opacity: 0.6;
+}

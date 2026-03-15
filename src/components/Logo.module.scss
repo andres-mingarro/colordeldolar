@@ -1,0 +1,22 @@
+.logo {
+  max-width: 330px;
+  width: 100%;
+  // Colores del isologo (flechas) — fijos en ambos temas
+  --logo-azul-fondo:   #2d56b2;
+  --logo-azul-sombra:  #294f9b;
+  --logo-verde-fondo:  #4cbf00;
+  --logo-verde-sombra: #319f00;
+
+  // Color del texto — cambia según tema
+  --logo-texto: #ededed; // dark (default)
+
+  :global([data-theme="light"]) & {
+    --logo-texto: #1a1a1a;
+  }
+
+  .fondoAzul   { fill: var(--logo-azul-fondo); }
+  .sombraAzul  { fill: var(--logo-azul-sombra); }
+  .fondoVerde  { fill: var(--logo-verde-fondo); }
+  .sombraVerde { fill: var(--logo-verde-sombra); }
+  .texto       { fill: var(--logo-texto); }
+}

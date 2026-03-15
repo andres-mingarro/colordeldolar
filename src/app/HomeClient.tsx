@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DolarValue from '@/components/dolar-value'
-import ThemeToggle from '@/components/ThemeToggle'
+import Footer from '@/components/Footer'
+import Header from '@/components/Header'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
 import { cn } from '@/lib/utils'
 
@@ -104,9 +105,9 @@ export default function HomeClient({ initialData }: Props) {
   const dotActive = FORCE_POLLING || (pollingActivo && mercadoAbierto)
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-background gap-10 px-4">
-      <ThemeToggle style={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-      <h1 className="text-2xl font-bold tracking-tight">💵 Color del Dólar</h1>
+    <main className="min-h-screen flex flex-col bg-background">
+      <Header />
+      <div className="flex-1 flex flex-col items-center justify-center gap-10 px-4 py-12">
 
       {cargando ? (
         <p className="text-lg text-muted-foreground animate-pulse">Cargando valores...</p>
@@ -151,6 +152,8 @@ export default function HomeClient({ initialData }: Props) {
           </p>
         )}
       </div>
+      </div>
+      <Footer />
     </main>
   )
 }

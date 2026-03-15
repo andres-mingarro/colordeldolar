@@ -10,7 +10,7 @@ interface DolarValueProps {
 export default function DolarValue({ titulo, compra, venta, color = 'neutral' }: DolarValueProps) {
   return (
     <div
-      className="flex flex-col items-center gap-4 rounded-2xl py-10 px-14 border"
+      className="flex flex-col items-center gap-4 rounded-2xl py-7 px-10 border"
       style={{
         background: `var(--v-${color}-bg)`,
         borderColor: `var(--v-${color}-border)`,
@@ -27,7 +27,7 @@ export default function DolarValue({ titulo, compra, venta, color = 'neutral' }:
         <div className="flex flex-col items-center gap-1">
           <span className="text-xs uppercase tracking-wider text-muted-foreground">Compra</span>
           <span
-            className="text-6xl font-bold tabular-nums leading-none"
+            className="text-4xl font-bold tabular-nums leading-none"
             style={{ color: `var(--v-${color}-compra)` }}
           >
             ${compra.toLocaleString('es-AR')}
@@ -36,7 +36,7 @@ export default function DolarValue({ titulo, compra, venta, color = 'neutral' }:
         <div className="flex flex-col items-center gap-1">
           <span className="text-xs uppercase tracking-wider text-muted-foreground">Venta</span>
           <span
-            className="text-6xl font-bold tabular-nums leading-none"
+            className="text-4xl font-bold tabular-nums leading-none"
             style={{ color: `var(--v-${color}-venta)` }}
           >
             ${venta.toLocaleString('es-AR')}

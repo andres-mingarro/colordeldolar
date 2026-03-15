@@ -1,0 +1,15 @@
+.socials {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.link {
+  color: var(--dimmer);
+  line-height: 0;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--muted);
+  }
+}
