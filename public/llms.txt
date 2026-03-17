@@ -1,8 +1,8 @@
-# Color del Dólar
+# Colordeldolar
 
-> Sitio web argentino que muestra en tiempo real las cotizaciones del dólar Blue y el dólar Oficial. Se actualiza automáticamente durante el horario del mercado (lunes a viernes).
+> Sitio web argentino que muestra en tiempo real las cotizaciones del dólar Blue, Oficial, MEP, CCL, Tarjeta y Mayorista. Se actualiza automáticamente durante el horario del mercado (lunes a viernes).
 
-Color del Dólar es una herramienta de consulta rápida para seguir la evolución del tipo de cambio en Argentina. Muestra los precios de compra y venta de las dos cotizaciones más consultadas: el dólar Blue (mercado informal) y el dólar Oficial (tipo de cambio regulado por el BCRA).
+Colordeldolar es una herramienta de consulta rápida para seguir la evolución del tipo de cambio en Argentina. Muestra los precios de compra y venta de las principales cotizaciones del dólar.
 
 ## Datos disponibles
 
@@ -24,3 +24,7 @@ Los valores provienen de [dolarapi.com](https://dolarapi.com), una API pública 
 
 - **Dólar Blue**: cotización del mercado informal argentino (precio de compra y venta).
 - **Dólar Oficial**: cotización regulada por el Banco Central de la República Argentina (BCRA).
+- **Dólar MEP**: dólar bolsa, obtenido mediante compra/venta de bonos en pesos y dólares.
+- **Dólar CCL**: contado con liquidación, similar al MEP pero opera con bonos en el exterior.
+- **Dólar Tarjeta**: tipo de cambio aplicado a compras con tarjeta en el exterior (oficial + impuestos).
+- **Dólar Mayorista**: cotización interbancaria, operada entre bancos y el BCRA.
