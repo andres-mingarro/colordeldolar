@@ -28,6 +28,13 @@ async function getInitialDolar() {
 export default async function Home() {
   const [initialData, inflacion] = await Promise.all([getInitialDolar(), fetchInflacionData()])
 
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Colordeldolar',
+    url: 'https://colordeldolar.com.ar',
+  }
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -63,6 +70,10 @@ export default async function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
