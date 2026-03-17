@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.left}>
         <span className={styles.logoWrap}>
-          <Logo width={80} />
+          <Logo />
         </span>
         <div className={styles.meta}>
           <span>© 2026 Color del Dólar</span>

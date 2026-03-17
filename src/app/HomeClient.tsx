@@ -137,14 +137,14 @@ export default function HomeClient({ initialData, inflacion }: Props) {
             titulo="Dólar Blue"
             compra={data.blue.compra}
             venta={data.blue.venta}
-            color="green"
+            color="blue"
             tendencia={tendencia.blue}
           />
           <DolarValue
             titulo="Dólar Oficial"
             compra={data.oficial.compra}
             venta={data.oficial.venta}
-            color="neutral"
+            color="green"
             tendencia={tendencia.oficial}
           />
         </Container>
