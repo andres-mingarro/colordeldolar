@@ -1,6 +1,10 @@
 .logo {
   max-width: 330px;
   width: 100%;
+
+  @media (max-width: 1023px) {
+    max-width: 200px;
+  }
   // Colores del isologo (flechas) — fijos en ambos temas
   --logo-azul-fondo:   #2d56b2;
   --logo-azul-sombra:  #294f9b;
