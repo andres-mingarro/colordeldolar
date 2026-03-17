@@ -86,7 +86,7 @@ export async function GET() {
     .catch((err) => console.error('[db] Error al guardar cotización:', err))
 
   // Postear en X si corresponde (fire & forget)
-  postearEnX({ blue, oficial, esApertura, fecha })
+  postearEnX({ blue, oficial, bolsa: mep, tarjeta, ccl, mayorista, esApertura, fecha })
     .catch((err) => console.error('[x] Error al postear:', err))
 
   // Actualizar snapshot solo si el precio cambió
@@ -151,11 +151,19 @@ async function actualizarSnapshot(curr: {
 async function postearEnX({
   blue,
   oficial,
+  bolsa,
+  tarjeta,
+  ccl,
+  mayorista,
   esApertura,
   fecha,
 }: {
   blue: { compra: number; venta: number }
   oficial: { compra: number; venta: number }
+  bolsa: { compra: number; venta: number } | null
+  tarjeta: { compra: number; venta: number } | null
+  ccl: { compra: number; venta: number } | null
+  mayorista: { compra: number; venta: number } | null
   esApertura: boolean
   fecha: string
 }) {
@@ -171,6 +179,14 @@ async function postearEnX({
     blueVenta: blue.venta,
     oficialCompra: oficial.compra,
     oficialVenta: oficial.venta,
+    bolsaCompra: bolsa?.compra ?? '',
+    bolsaVenta: bolsa?.venta ?? '',
+    tarjetaCompra: tarjeta?.compra ?? '',
+    tarjetaVenta: tarjeta?.venta ?? '',
+    cclCompra: ccl?.compra ?? '',
+    cclVenta: ccl?.venta ?? '',
+    mayoristaCompra: mayorista?.compra ?? '',
+    mayoristaVenta: mayorista?.venta ?? '',
     time,
     fecha,
   }
