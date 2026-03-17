@@ -31,7 +31,7 @@ interface Props {
 
 export default function HomeClient({ initialData, inflacion }: Props) {
   const [data, setData] = useState<DolarResponse | null>(initialData)
-  const prevDataRef = useRef<DolarResponse | null>(null)
+  const prevDataRef = useRef<DolarResponse | null>(initialData)
   const [tendencia, setTendencia] = useState<{ blue: 'up' | 'down' | null; oficial: 'up' | 'down' | null; mep: 'up' | 'down' | null; tarjeta: 'up' | 'down' | null; ccl: 'up' | 'down' | null; mayorista: 'up' | 'down' | null }>({ blue: null, oficial: null, mep: null, tarjeta: null, ccl: null, mayorista: null })
   const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
   const [mercadoAbierto, setMercadoAbierto] = useState(false)

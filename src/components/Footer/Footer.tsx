@@ -15,7 +15,7 @@ export default function Footer() {
           <a href="/terminos" className={styles.tyc}>Términos y condiciones</a>
         </div>
       </div>
-      <SocialIcons />
+      <SocialIcons full />
     </footer>
   )
 }

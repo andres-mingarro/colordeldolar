@@ -7,6 +7,23 @@
 .link {
   display: flex;
   align-items: center;
+  padding: 0.35rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dimmer);
+  line-height: 0;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: var(--muted);
+    border-color: var(--muted);
+  }
+}
+
+.linkFull {
+  display: flex;
+  align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.65rem;
   border: 1px solid var(--border-subtle);
