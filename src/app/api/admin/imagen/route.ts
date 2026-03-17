@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   const oficial = await oficialRes.json()
   const fecha = fechaHoyAR()
 
-  const buffer = await generarImagenDolar({ blue, oficial, fecha })
+  const buffer = await generarImagenDolar({ blue, oficial, fecha, tipo })
 
   const dia = DIAS[new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE })).getDay()]
   const nombre = `${dia}-${tipo}.png`

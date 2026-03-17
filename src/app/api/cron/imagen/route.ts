@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
   const oficial = await oficialRes.json()
   const fecha = fechaHoyAR()
 
-  const buffer = await generarImagenDolar({ blue, oficial, fecha })
+  const buffer = await generarImagenDolar({ blue, oficial, fecha, tipo })
   const nombre = `${DIAS[dia]}-${tipo}.png`
 
   await subirImagenDrive(buffer, nombre)

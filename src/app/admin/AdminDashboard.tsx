@@ -71,12 +71,12 @@ export default function AdminDashboard({
   const [guardandoX, setGuardandoX] = useState(false)
   const [guardadoX, setGuardadoX] = useState(false)
 
-  const [generandoImagen, setGenerandoImagen] = useState(false)
+  const [generandoImagen, setGenerandoImagen] = useState<'inicio' | 'final' | null>(null)
   const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string; driveUrl: string } | null>(null)
   const [errorImagen, setErrorImagen] = useState(false)
 
   async function generarImagen(tipo: 'inicio' | 'final') {
-    setGenerandoImagen(true)
+    setGenerandoImagen(tipo)
     setImagenGenerada(null)
     setErrorImagen(false)
     const res = await fetch('/api/admin/imagen', {
@@ -84,7 +84,7 @@ export default function AdminDashboard({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tipo }),
     })
-    setGenerandoImagen(false)
+    setGenerandoImagen(null)
     if (res.ok) {
       const data = await res.json()
       setImagenGenerada({ nombre: data.nombre, preview: data.preview, driveUrl: data.driveUrl })
@@ -217,46 +217,75 @@ export default function AdminDashboard({
         <TabsContent value="instagram">
           <Card>
             <CardHeader>
-              <CardTitle>Imagen para Instagram</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                </svg>
+                Imagen para Instagram
+              </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => generarImagen('inicio')}
-                  disabled={generandoImagen}
-                  variant="secondary"
-                  className="flex-1"
-                >
-                  {generandoImagen ? 'Generando…' : 'Imagen apertura'}
-                </Button>
-                <Button
-                  onClick={() => generarImagen('final')}
-                  disabled={generandoImagen}
-                  variant="secondary"
-                  className="flex-1"
-                >
-                  {generandoImagen ? 'Generando…' : 'Imagen cierre'}
-                </Button>
-                <Button variant="secondary" className="flex-1" asChild>
-                  <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer">
-                    Ver carpeta en Drive
-                  </a>
-                </Button>
-              </div>
-
-              {imagenGenerada && (
-                <div className="flex flex-col gap-3">
-                  <p className="text-sm text-green-500">✓ Imagen subida: {imagenGenerada.nombre}</p>
-                  <img
-                    src={`data:image/png;base64,${imagenGenerada.preview}`}
-                    alt="Preview"
-                    className="w-full rounded-lg border border-border"
-                  />
+            <CardContent>
+              <div className="flex gap-6 items-start">
+                {/* Botones + mensajes */}
+                <div className="flex flex-col gap-3 flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Generar imágenes manualmente</p>
+                  <Button
+                    onClick={() => generarImagen('inicio')}
+                    disabled={generandoImagen !== null}
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    {generandoImagen === 'inicio' ? <span>Generando<AnimatedDots /></span> : 'Imagen apertura'}
+                  </Button>
+                  <Button
+                    onClick={() => generarImagen('final')}
+                    disabled={generandoImagen !== null}
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    {generandoImagen === 'final' ? <span>Generando<AnimatedDots /></span> : 'Imagen cierre'}
+                  </Button>
+                  <Button variant="secondary" className="w-full" asChild>
+                    <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer">
+                      Ver carpeta en Drive
+                    </a>
+                  </Button>
+                  {imagenGenerada && (
+                    <div className="flex items-center gap-2 rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span className="text-sm text-green-500 font-medium">{imagenGenerada.nombre}</span>
+                    </div>
+                  )}
+                  {errorImagen && (
+                    <p className="text-sm text-destructive">Error al generar la imagen.</p>
+                  )}
                 </div>
-              )}
-              {errorImagen && (
-                <p className="text-sm text-destructive">Error al generar la imagen.</p>
-              )}
+
+                {/* Preview */}
+                {/* Preview */}
+                <div className="rounded-lg border border-border overflow-hidden shrink-0 relative" style={{ aspectRatio: '9/16', width: '450px' }}>
+                  {imagenGenerada ? (
+                    <>
+                      <img
+                        src={`data:image/png;base64,${imagenGenerada.preview}`}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute top-3 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-widest bg-black/60 text-white px-3 py-1 rounded-full">
+                        {imagenGenerada.nombre.includes('inicio') ? 'Apertura' : 'Cierre'}
+                      </span>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <span className="text-xs text-muted-foreground">
+                        {generandoImagen ? 'Generando…' : 'Preview'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -371,5 +400,15 @@ export default function AdminDashboard({
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+function AnimatedDots() {
+  return (
+    <span className="inline-flex gap-px ml-0.5">
+      {[0, 1, 2].map(i => (
+        <span key={i} className="animate-bounce" style={{ animationDelay: `${i * 0.15}s`, animationDuration: '0.8s' }}>.</span>
+      ))}
+    </span>
   )
 }
