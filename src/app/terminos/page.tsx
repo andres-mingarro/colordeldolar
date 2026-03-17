@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import BackButton from '@/components/BackButton/BackButton'
 
 export const metadata: Metadata = {
   title: 'Términos y condiciones — Color del Dólar',
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
 export default function TerminosPage() {
   return (
     <div className="w-full max-w-2xl mx-auto px-6 py-16">
+
+        <BackButton href="/" />
 
         <h1 className="text-xl font-semibold mb-1" style={{ color: 'var(--fg)' }}>
           Términos y condiciones

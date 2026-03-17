@@ -4,6 +4,7 @@ import Script from "next/script";
 import PageLayout from "@/components/PageLayout/PageLayout";
 import "./globals.css";
 import "./globals.scss";
+import "./view-transitions.scss";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

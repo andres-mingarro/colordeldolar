@@ -1,16 +1,16 @@
-import Link from 'next/link'
 import Logo from '@/components/Logo/Logo'
 import SocialIcons from '@/components/SocialIcons/SocialIcons'
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
+import TransitionLink from '@/components/TransitionLink/TransitionLink'
 import styles from './Header.module.scss'
 
 export default function Header() {
   return (
     <header className={`mb-9 ${styles.header}`}>
       <div className={styles.logoWrap}>
-        <Link href="/" aria-label="Ir al inicio">
+        <TransitionLink href="/" aria-label="Ir al inicio">
           <Logo />
-        </Link>
+        </TransitionLink>
       </div>
       <div className={styles.right}>
         <SocialIcons />
