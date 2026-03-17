@@ -18,7 +18,7 @@ export default function Inflacion({ data }: Props) {
 
   return (
     <Container tag="div" size="medium" className="inflacion" classNameInner=" ">
-      <Card padding="small" className="flex gap-4 flex-col lg:flex-row items-start lg:items-center w-full">
+      <Card padding="small" className="flex gap-4 flex-col lg:flex-row items-center justify-center w-full">
         <span className="text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>
           Inflación {anio}:
         </span>

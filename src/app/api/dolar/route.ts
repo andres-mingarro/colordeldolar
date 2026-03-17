@@ -23,9 +23,13 @@ export function invalidateConfigCache() {
 }
 
 export async function GET() {
-  const [blueRes, oficialRes] = await Promise.all([
+  const [blueRes, oficialRes, mepRes, tarjetaRes, cclRes, mayoristaRes] = await Promise.all([
     fetch('https://dolarapi.com/v1/dolares/blue', { cache: 'no-store' }),
     fetch('https://dolarapi.com/v1/dolares/oficial', { cache: 'no-store' }),
+    fetch('https://dolarapi.com/v1/dolares/bolsa', { cache: 'no-store' }),
+    fetch('https://dolarapi.com/v1/dolares/tarjeta', { cache: 'no-store' }),
+    fetch('https://dolarapi.com/v1/dolares/contadoconliqui', { cache: 'no-store' }),
+    fetch('https://dolarapi.com/v1/dolares/mayorista', { cache: 'no-store' }),
   ])
 
   if (!blueRes.ok || !oficialRes.ok) {
@@ -34,6 +38,10 @@ export async function GET() {
 
   const blue = await blueRes.json()
   const oficial = await oficialRes.json()
+  const mep = mepRes.ok ? await mepRes.json() : null
+  const tarjeta = tarjetaRes.ok ? await tarjetaRes.json() : null
+  const ccl = cclRes.ok ? await cclRes.json() : null
+  const mayorista = mayoristaRes.ok ? await mayoristaRes.json() : null
 
   const fecha = fechaHoyAR()
 
@@ -81,7 +89,7 @@ export async function GET() {
   postearEnX({ blue, oficial, esApertura, fecha })
     .catch((err) => console.error('[x] Error al postear:', err))
 
-  return NextResponse.json({ blue, oficial })
+  return NextResponse.json({ blue, oficial, mep, tarjeta, ccl, mayorista })
 }
 
 async function postearEnX({

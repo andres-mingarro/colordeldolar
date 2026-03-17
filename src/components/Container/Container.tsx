@@ -2,6 +2,7 @@ import { CSSProperties, ElementType, ReactNode, Ref } from 'react'
 import styles from './Container.module.scss'
 
 type Size = 'default' | 'medium' | 'small' | 'full'
+type MarginBottom = 'none' | 'small' | 'default'
 
 interface Props {
   children: ReactNode
@@ -13,6 +14,7 @@ interface Props {
   style?: CSSProperties
   nopadding?: boolean
   elementRef?: Ref<HTMLDivElement>
+  mb?: MarginBottom
 }
 
 const sizeClass: Record<Size, string> = {
@@ -32,9 +34,11 @@ export default function Container({
   style,
   nopadding,
   elementRef,
+  mb = 'default',
 }: Props) {
+  const mbClass: Record<MarginBottom, string> = { none: 'mb-0', small: 'mb-4', default: 'mb-9' }
   return (
-    <Tag id={id} className={`${styles[sizeClass[size]]} ${className} mb-9`} style={style}>
+    <Tag id={id} className={`${styles[sizeClass[size]]} ${className} ${mbClass[mb]}`} style={style}>
       <div
         ref={elementRef}
         className={`${styles['container-inner']} ${nopadding ? styles['no-padding'] : ''} ${classNameInner}`}

@@ -3,13 +3,23 @@ import { fetchInflacionData } from './api/inflacion/route'
 
 async function getInitialDolar() {
   try {
-    const [blueRes, oficialRes] = await Promise.all([
+    const [blueRes, oficialRes, mepRes, tarjetaRes, cclRes, mayoristaRes] = await Promise.all([
       fetch('https://dolarapi.com/v1/dolares/blue', { next: { revalidate: 60 } }),
       fetch('https://dolarapi.com/v1/dolares/oficial', { next: { revalidate: 60 } }),
+      fetch('https://dolarapi.com/v1/dolares/bolsa', { next: { revalidate: 60 } }),
+      fetch('https://dolarapi.com/v1/dolares/tarjeta', { next: { revalidate: 60 } }),
+      fetch('https://dolarapi.com/v1/dolares/contadoconliqui', { next: { revalidate: 60 } }),
+      fetch('https://dolarapi.com/v1/dolares/mayorista', { next: { revalidate: 60 } }),
     ])
     if (!blueRes.ok || !oficialRes.ok) return null
-    const [blue, oficial] = await Promise.all([blueRes.json(), oficialRes.json()])
-    return { blue, oficial }
+    const [blue, oficial, mep, tarjeta, ccl, mayorista] = await Promise.all([
+      blueRes.json(), oficialRes.json(),
+      mepRes.ok ? mepRes.json() : Promise.resolve(null),
+      tarjetaRes.ok ? tarjetaRes.json() : Promise.resolve(null),
+      cclRes.ok ? cclRes.json() : Promise.resolve(null),
+      mayoristaRes.ok ? mayoristaRes.json() : Promise.resolve(null),
+    ])
+    return { blue, oficial, mep, tarjeta, ccl, mayorista }
   } catch {
     return null
   }
