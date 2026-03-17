@@ -225,8 +225,9 @@ export default function HomeClient({ initialData, inflacion }: Props) {
 function MiniCotizacion({ label, compra, venta, tendencia, className }: { label: string; compra: number; venta: number; tendencia: 'up' | 'down' | null; className?: string }) {
   return (
     <div className={`flex flex-col items-center gap-1${className ? ` ${className}` : ''}`}>
-      <span className="text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>
+      <span className="flex items-center gap-1 text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>
         {label}
+        <Trend valor={tendencia} />
       </span>
       <div className="flex gap-3 items-center">
         <span className="flex items-center gap-1 text-xs tabular-nums" style={{ color: 'var(--fg-secondary)' }}>
@@ -237,7 +238,6 @@ function MiniCotizacion({ label, compra, venta, tendencia, className }: { label:
         <span className="flex items-center gap-1 text-xs tabular-nums" style={{ color: 'var(--fg-secondary)' }}>
           <span style={{ color: 'var(--muted)' }}>Venta:</span>
           <span className="font-semibold">${venta.toLocaleString('es-AR')}</span>
-          <Trend valor={tendencia} />
         </span>
       </div>
     </div>
