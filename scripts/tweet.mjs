@@ -21,14 +21,24 @@ const client = new TwitterApi({
   accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
 })
 
+const SITE_URL = 'https://colordeldolar.com.ar'
+
 async function fetchDolar() {
-  const [blueRes, oficialRes] = await Promise.all([
+  const [blueRes, oficialRes, bolsaRes, tarjetaRes, cclRes, mayoristaRes] = await Promise.all([
     fetch('https://dolarapi.com/v1/dolares/blue'),
     fetch('https://dolarapi.com/v1/dolares/oficial'),
+    fetch('https://dolarapi.com/v1/dolares/bolsa'),
+    fetch('https://dolarapi.com/v1/dolares/tarjeta'),
+    fetch('https://dolarapi.com/v1/dolares/contadoconliqui'),
+    fetch('https://dolarapi.com/v1/dolares/mayorista'),
   ])
   const blue = await blueRes.json()
   const oficial = await oficialRes.json()
-  return { blue, oficial }
+  const bolsa = await bolsaRes.json()
+  const tarjeta = await tarjetaRes.json()
+  const ccl = await cclRes.json()
+  const mayorista = await mayoristaRes.json()
+  return { blue, oficial, bolsa, tarjeta, ccl, mayorista }
 }
 
 function formatPrecio(valor) {
@@ -40,7 +50,7 @@ function signo(n) {
 }
 
 async function tweetApertura() {
-  const { blue, oficial } = await fetchDolar()
+  const { blue, oficial, bolsa, tarjeta, ccl, mayorista } = await fetchDolar()
 
   // Guardar valores de apertura para calcular diferencia al cierre
   writeFileSync(APERTURA_FILE, JSON.stringify({
@@ -51,15 +61,15 @@ async function tweetApertura() {
 
   const texto = `🟢 Apertura del mercado
 
-💵 Dólar Blue
-   Compra: ${formatPrecio(blue.compra)}
-   Venta:  ${formatPrecio(blue.venta)}
+💵 Blue      ${formatPrecio(blue.compra)} / ${formatPrecio(blue.venta)}
+🏦 Oficial   ${formatPrecio(oficial.compra)} / ${formatPrecio(oficial.venta)}
+📈 MEP       ${formatPrecio(bolsa.compra)} / ${formatPrecio(bolsa.venta)}
+💳 Tarjeta   ${formatPrecio(tarjeta.venta)}
+🔄 CCL       ${formatPrecio(ccl.venta)}
+🏭 Mayorista ${formatPrecio(mayorista.venta)}
 
-🏦 Dólar Oficial
-   Compra: ${formatPrecio(oficial.compra)}
-   Venta:  ${formatPrecio(oficial.venta)}
-
-⏰ ${new Date().toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}`
+#DólarBlue #DólarOficial #MEP #CCL #Argentina
+${SITE_URL}`
 
   if (TWEETS_DESACTIVADOS) {
     console.log('Tweets desactivados. Texto que se hubiera enviado:\n', texto)
@@ -70,7 +80,7 @@ async function tweetApertura() {
 }
 
 async function tweetCierre() {
-  const { blue, oficial } = await fetchDolar()
+  const { blue, oficial, bolsa, tarjeta, ccl, mayorista } = await fetchDolar()
 
   let diffBlueVenta = null
   let diffOficialVenta = null
@@ -86,15 +96,15 @@ async function tweetCierre() {
 
   const texto = `🔴 Cierre del mercado
 
-💵 Dólar Blue
-   Compra: ${formatPrecio(blue.compra)}
-   Venta:  ${formatPrecio(blue.venta)}${diffBlue}
+💵 Blue      ${formatPrecio(blue.compra)} / ${formatPrecio(blue.venta)}${diffBlue}
+🏦 Oficial   ${formatPrecio(oficial.compra)} / ${formatPrecio(oficial.venta)}${diffOficial}
+📈 MEP       ${formatPrecio(bolsa.compra)} / ${formatPrecio(bolsa.venta)}
+💳 Tarjeta   ${formatPrecio(tarjeta.venta)}
+🔄 CCL       ${formatPrecio(ccl.venta)}
+🏭 Mayorista ${formatPrecio(mayorista.venta)}
 
-🏦 Dólar Oficial
-   Compra: ${formatPrecio(oficial.compra)}
-   Venta:  ${formatPrecio(oficial.venta)}${diffOficial}
-
-⏰ ${new Date().toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}`
+#DólarBlue #DólarOficial #MEP #CCL #Argentina
+${SITE_URL}`
 
   if (TWEETS_DESACTIVADOS) {
     console.log('Tweets desactivados. Texto que se hubiera enviado:\n', texto)

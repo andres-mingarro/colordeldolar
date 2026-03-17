@@ -70,6 +70,29 @@ export default function AdminDashboard({
   const [msgCierre, setMsgCierre] = useState(xMsgCierre)
   const [guardandoX, setGuardandoX] = useState(false)
   const [guardadoX, setGuardadoX] = useState(false)
+  const [posteando, setPosteando] = useState<'apertura' | 'cierre' | null>(null)
+  const [posteado, setPosteado] = useState<'apertura' | 'cierre' | null>(null)
+  const [errorPost, setErrorPost] = useState<'apertura' | 'cierre' | null>(null)
+
+  async function postManual(tipo: 'apertura' | 'cierre') {
+    setPosteando(tipo)
+    setPosteado(null)
+    setErrorPost(null)
+    const template = tipo === 'apertura' ? msgApertura : msgCierre
+    const res = await fetch('/api/admin/tweet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ template }),
+    })
+    setPosteando(null)
+    if (res.ok) {
+      setPosteado(tipo)
+      setTimeout(() => setPosteado(null), 3000)
+    } else {
+      setErrorPost(tipo)
+      setTimeout(() => setErrorPost(null), 3000)
+    }
+  }
 
   const [generandoImagen, setGenerandoImagen] = useState<'inicio' | 'final' | null>(null)
   const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string; driveUrl: string } | null>(null)
@@ -146,7 +169,10 @@ export default function AdminDashboard({
         <TabsList className="w-full">
           <TabsTrigger value="configuracion" className="flex-1">Configuración</TabsTrigger>
           <TabsTrigger value="instagram" className="flex-1">Instagram</TabsTrigger>
-          <TabsTrigger value="x" className="flex-1">Opciones de X</TabsTrigger>
+          <TabsTrigger value="x" className="flex-1">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="mr-1.5 shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Opciones
+          </TabsTrigger>
           <TabsTrigger value="cotizaciones" className="flex-1">Cotizaciones</TabsTrigger>
         </TabsList>
 
@@ -294,10 +320,9 @@ export default function AdminDashboard({
         <TabsContent value="x">
           <Card>
             <CardHeader>
-              <CardTitle>Opciones de X</CardTitle>
               <CardDescription>
                 Variables:{' '}
-                {['[blueCompra]', '[blueVenta]', '[oficialCompra]', '[oficialVenta]', '[time]', '[fecha]'].map(v => (
+                {['[blueCompra]', '[blueVenta]', '[oficialCompra]', '[oficialVenta]', '[bolsaCompra]', '[bolsaVenta]', '[tarjetaCompra]', '[tarjetaVenta]', '[cclCompra]', '[cclVenta]', '[mayoristaCompra]', '[mayoristaVenta]', '[time]', '[fecha]'].map(v => (
                   <code key={v} className="mx-0.5 rounded bg-muted px-1 py-0.5 text-xs font-mono">{v}</code>
                 ))}
               </CardDescription>
@@ -307,37 +332,71 @@ export default function AdminDashboard({
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="x-apertura">Post de apertura</Label>
-                    <Switch
-                      id="x-apertura"
-                      checked={xApertura}
-                      onCheckedChange={setXApertura}
-                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={posteando !== null}
+                        onClick={() => postManual('apertura')}
+                      >
+                        {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost === 'apertura' ? 'Error' : 'Post manual'}
+                      </Button>
+                      <Label htmlFor="x-apertura" className="text-xs text-muted-foreground">Auto</Label>
+                      <Switch
+                        id="x-apertura"
+                        checked={xApertura}
+                        onCheckedChange={setXApertura}
+                      />
+                    </div>
                   </div>
                   <Textarea
                     value={msgApertura}
                     onChange={e => setMsgApertura(e.target.value)}
-                    disabled={!xApertura}
                     rows={10}
                     className="font-mono text-sm"
                   />
+                  <div className="flex items-end justify-between">
+                    <p className="text-xs text-muted-foreground">El contador incluye las variables como texto. El tweet real será más corto.</p>
+                    <p className={`text-xs shrink-0 ${msgApertura.length > 280 ? 'text-destructive font-medium' : msgApertura.length > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
+                      {msgApertura.length} / 280
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="x-cierre">Post de cierre</Label>
-                    <Switch
-                      id="x-cierre"
-                      checked={xCierre}
-                      onCheckedChange={setXCierre}
-                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={posteando !== null}
+                        onClick={() => postManual('cierre')}
+                      >
+                        {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost === 'cierre' ? 'Error' : 'Post manual'}
+                      </Button>
+                      <Label htmlFor="x-cierre" className="text-xs text-muted-foreground">Auto</Label>
+                      <Switch
+                        id="x-cierre"
+                        checked={xCierre}
+                        onCheckedChange={setXCierre}
+                      />
+                    </div>
                   </div>
                   <Textarea
                     value={msgCierre}
                     onChange={e => setMsgCierre(e.target.value)}
-                    disabled={!xCierre}
                     rows={10}
                     className="font-mono text-sm"
                   />
+                  <div className="flex items-end justify-between">
+                    <p className="text-xs text-muted-foreground">El contador incluye las variables como texto. El tweet real será más corto.</p>
+                    <p className={`text-xs shrink-0 ${msgCierre.length > 280 ? 'text-destructive font-medium' : msgCierre.length > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
+                      {msgCierre.length} / 280
+                    </p>
+                  </div>
                 </div>
 
                 <Button type="submit" disabled={guardandoX} className="w-full">

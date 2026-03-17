@@ -7,6 +7,14 @@ export function buildTweetText(
     blueVenta: number | string
     oficialCompra: number | string
     oficialVenta: number | string
+    bolsaCompra: number | string
+    bolsaVenta: number | string
+    tarjetaCompra: number | string
+    tarjetaVenta: number | string
+    cclCompra: number | string
+    cclVenta: number | string
+    mayoristaCompra: number | string
+    mayoristaVenta: number | string
     time: string
     fecha: string
   }
@@ -16,6 +24,14 @@ export function buildTweetText(
     .replace(/\[blueVenta\]/g, String(vars.blueVenta))
     .replace(/\[oficialCompra\]/g, String(vars.oficialCompra))
     .replace(/\[oficialVenta\]/g, String(vars.oficialVenta))
+    .replace(/\[bolsaCompra\]/g, String(vars.bolsaCompra))
+    .replace(/\[bolsaVenta\]/g, String(vars.bolsaVenta))
+    .replace(/\[tarjetaCompra\]/g, String(vars.tarjetaCompra))
+    .replace(/\[tarjetaVenta\]/g, String(vars.tarjetaVenta))
+    .replace(/\[cclCompra\]/g, String(vars.cclCompra))
+    .replace(/\[cclVenta\]/g, String(vars.cclVenta))
+    .replace(/\[mayoristaCompra\]/g, String(vars.mayoristaCompra))
+    .replace(/\[mayoristaVenta\]/g, String(vars.mayoristaVenta))
     .replace(/\[time\]/g, vars.time)
     .replace(/\[fecha\]/g, vars.fecha)
 }

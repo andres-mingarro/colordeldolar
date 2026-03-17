@@ -4,29 +4,29 @@ import { eq } from 'drizzle-orm'
 import { fechaHoyAR } from '@/lib/fecha'
 import AdminDashboard from './AdminDashboard'
 
-const DEFAULT_MSG_APERTURA = `Apertura del mercado
+const DEFAULT_MSG_APERTURA = `🟢 Apertura del mercado
 
-💵 Dólar Blue
-   Compra: $[blueCompra]
-   Venta:  $[blueVenta]
+💵 Blue      $[blueCompra] / $[blueVenta]
+🏦 Oficial   $[oficialCompra] / $[oficialVenta]
+📈 MEP       $[bolsaCompra] / $[bolsaVenta]
+💳 Tarjeta   $[tarjetaVenta]
+🔄 CCL       $[cclVenta]
+🏭 Mayorista $[mayoristaVenta]
 
-🏦 Dólar Oficial
-   Compra: $[oficialCompra]
-   Venta:  $[oficialVenta]
+#DólarBlue #DólarOficial #MEP #CCL #Argentina
+https://colordeldolar.com.ar`
 
-⏰ [time]`
+const DEFAULT_MSG_CIERRE = `🔴 Cierre del mercado
 
-const DEFAULT_MSG_CIERRE = `Cierre del mercado
+💵 Blue      $[blueCompra] / $[blueVenta]
+🏦 Oficial   $[oficialCompra] / $[oficialVenta]
+📈 MEP       $[bolsaCompra] / $[bolsaVenta]
+💳 Tarjeta   $[tarjetaVenta]
+🔄 CCL       $[cclVenta]
+🏭 Mayorista $[mayoristaVenta]
 
-💵 Dólar Blue
-   Compra: $[blueCompra]
-   Venta:  $[blueVenta]
-
-🏦 Dólar Oficial
-   Compra: $[oficialCompra]
-   Venta:  $[oficialVenta]
-
-⏰ [time]`
+#DólarBlue #DólarOficial #MEP #CCL #Argentina
+https://colordeldolar.com.ar`
 
 export default async function AdminPage() {
   const hoy = fechaHoyAR()
