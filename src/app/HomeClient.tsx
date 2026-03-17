@@ -32,6 +32,19 @@ interface Props {
 export default function HomeClient({ initialData, inflacion }: Props) {
   const [data, setData] = useState<DolarResponse | null>(initialData)
   const prevDataRef = useRef<DolarResponse | null>(initialData)
+
+  function calcTendencia(curr: DolarResponse, prev: DolarResponse) {
+    const t = (a: number, b: number) => a !== b ? (a > b ? 'up' : 'down') as 'up' | 'down' : null
+    return {
+      blue:      t(curr.blue.venta, prev.blue.venta),
+      oficial:   t(curr.oficial.venta, prev.oficial.venta),
+      mep:       curr.mep && prev.mep ? t(curr.mep.venta, prev.mep.venta) : null,
+      tarjeta:   curr.tarjeta && prev.tarjeta ? t(curr.tarjeta.venta, prev.tarjeta.venta) : null,
+      ccl:       curr.ccl && prev.ccl ? t(curr.ccl.venta, prev.ccl.venta) : null,
+      mayorista: curr.mayorista && prev.mayorista ? t(curr.mayorista.venta, prev.mayorista.venta) : null,
+    }
+  }
+
   const [tendencia, setTendencia] = useState<{ blue: 'up' | 'down' | null; oficial: 'up' | 'down' | null; mep: 'up' | 'down' | null; tarjeta: 'up' | 'down' | null; ccl: 'up' | 'down' | null; mayorista: 'up' | 'down' | null }>({ blue: null, oficial: null, mep: null, tarjeta: null, ccl: null, mayorista: null })
   const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
   const [mercadoAbierto, setMercadoAbierto] = useState(false)
@@ -50,18 +63,9 @@ export default function HomeClient({ initialData, inflacion }: Props) {
     try {
       const res = await fetch('/api/dolar')
       const json: DolarResponse = await res.json()
-      setTendencia(prev => {
-        const p = prevDataRef.current
-        if (!p) return prev
-        return {
-          blue:    json.blue.venta !== p.blue.venta       ? (json.blue.venta > p.blue.venta ? 'up' : 'down')         : prev.blue,
-          oficial: json.oficial.venta !== p.oficial.venta ? (json.oficial.venta > p.oficial.venta ? 'up' : 'down')   : prev.oficial,
-          mep:     json.mep && p.mep && json.mep.venta !== p.mep.venta ? (json.mep.venta > p.mep.venta ? 'up' : 'down') : prev.mep,
-          tarjeta:  json.tarjeta && p.tarjeta && json.tarjeta.venta !== p.tarjeta.venta ? (json.tarjeta.venta > p.tarjeta.venta ? 'up' : 'down') : prev.tarjeta,
-          ccl:      json.ccl && p.ccl && json.ccl.venta !== p.ccl.venta ? (json.ccl.venta > p.ccl.venta ? 'up' : 'down') : prev.ccl,
-          mayorista: json.mayorista && p.mayorista && json.mayorista.venta !== p.mayorista.venta ? (json.mayorista.venta > p.mayorista.venta ? 'up' : 'down') : prev.mayorista,
-        }
-      })
+      const p = prevDataRef.current
+      if (p) setTendencia(prev => ({ ...prev, ...calcTendencia(json, p) }))
+      localStorage.setItem('dolar_prev', JSON.stringify(json))
       prevDataRef.current = json
       setData(json)
       setUltimaActualizacion(new Date().toLocaleTimeString('es-AR'))
@@ -104,6 +108,44 @@ export default function HomeClient({ initialData, inflacion }: Props) {
   useEffect(() => {
     if (initialData) setUltimaActualizacion(new Date().toLocaleTimeString('es-AR'))
   }, [initialData])
+
+  useEffect(() => {
+    if (!initialData) return
+    fetch('/api/dolar-snapshot')
+      .then(r => r.json())
+      .then(prev => {
+        if (prev) {
+          setTendencia(calcTendencia(initialData, {
+            blue:      { compra: Number(prev.blueCompra),      venta: Number(prev.blueVenta) },
+            oficial:   { compra: Number(prev.oficialCompra),   venta: Number(prev.oficialVenta) },
+            mep:       prev.mepVenta       ? { compra: Number(prev.mepCompra),       venta: Number(prev.mepVenta) }       : null,
+            tarjeta:   prev.tarjetaVenta   ? { compra: Number(prev.tarjetaCompra),   venta: Number(prev.tarjetaVenta) }   : null,
+            ccl:       prev.cclVenta       ? { compra: Number(prev.cclCompra),       venta: Number(prev.cclVenta) }       : null,
+            mayorista: prev.mayoristaVenta ? { compra: Number(prev.mayoristaCompra), venta: Number(prev.mayoristaVenta) } : null,
+          }))
+        }
+        fetch('/api/dolar-snapshot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            blueCompra:      initialData.blue.compra,
+            blueVenta:       initialData.blue.venta,
+            oficialCompra:   initialData.oficial.compra,
+            oficialVenta:    initialData.oficial.venta,
+            mepCompra:       initialData.mep?.compra       ?? null,
+            mepVenta:        initialData.mep?.venta        ?? null,
+            tarjetaCompra:   initialData.tarjeta?.compra   ?? null,
+            tarjetaVenta:    initialData.tarjeta?.venta    ?? null,
+            cclCompra:       initialData.ccl?.compra       ?? null,
+            cclVenta:        initialData.ccl?.venta        ?? null,
+            mayoristaCompra: initialData.mayorista?.compra ?? null,
+            mayoristaVenta:  initialData.mayorista?.venta  ?? null,
+          }),
+        })
+      })
+      .catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (initialData === null) fetchDolar()

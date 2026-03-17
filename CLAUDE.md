@@ -50,6 +50,7 @@ scripts/
 ## DB Schema
 - `cotizaciones_diarias`: id, tipo (blue|oficial), fecha, apertura_compra, apertura_venta, cierre_compra, cierre_venta
 - `configuracion`: clave (PK), valor — claves usadas: `polling_activo`, `polling_intervalo`, `mercado_hora_apertura`, `mercado_hora_cierre`
+- `dolar_snapshot`: fila única (id=1, siempre sobreescrita con upsert) — guarda el valor previo del dólar para calcular tendencia (↑↓) sin crecer la DB
 
 ## Convenciones
 - Idioma: español en UI y comentarios
