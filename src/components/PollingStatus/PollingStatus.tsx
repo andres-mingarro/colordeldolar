@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils'
 
 interface Props {
   dotActive: boolean
@@ -13,10 +12,16 @@ export default function PollingStatus({ dotActive, pollingActivo, mercadoAbierto
   return (
     <div className="flex flex-col items-center gap-1">
       <div className="flex items-center gap-2">
-        <span
-          className={cn('size-2 rounded-full', dotActive && 'animate-pulse')}
-          style={{ background: dotActive ? 'var(--dot-active)' : 'var(--dot-inactive)' }}
-        />
+        <span className="relative flex size-2">
+          <span
+            className="absolute inline-flex size-full rounded-full animate-ping opacity-75"
+            style={{ background: dotActive ? 'var(--dot-active)' : 'var(--dot-closed)' }}
+          />
+          <span
+            className="relative inline-flex size-2 rounded-full"
+            style={{ background: dotActive ? 'var(--dot-active)' : 'var(--dot-closed)' }}
+          />
+        </span>
         <span className="text-xs text-muted-foreground">
           {forcePoll
             ? 'Actualización forzada 24/7 (desarrollo)'
