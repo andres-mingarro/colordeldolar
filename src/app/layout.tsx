@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "Color del Dólar — Cotización dólar blue y oficial hoy",
     description: "Precio del dólar blue y oficial en Argentina, actualizado en tiempo real durante el horario del mercado.",
     url: "https://colordeldolar.com.ar",
-    siteName: "Color del Dólar",
+    siteName: "Colordeldolar",
     locale: "es_AR",
     type: "website",
   },
