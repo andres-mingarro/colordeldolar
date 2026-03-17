@@ -35,6 +35,12 @@ export const dolarSnapshot = pgTable('dolar_snapshot', {
   cclVenta:        numeric('ccl_venta',        { precision: 10, scale: 2 }),
   mayoristaCompra: numeric('mayorista_compra', { precision: 10, scale: 2 }),
   mayoristaVenta:  numeric('mayorista_venta',  { precision: 10, scale: 2 }),
+  tendenciaBlue:      varchar('tendencia_blue',      { length: 4 }),
+  tendenciaOficial:   varchar('tendencia_oficial',   { length: 4 }),
+  tendenciaMep:       varchar('tendencia_mep',       { length: 4 }),
+  tendenciaTarjeta:   varchar('tendencia_tarjeta',   { length: 4 }),
+  tendenciaCcl:       varchar('tendencia_ccl',       { length: 4 }),
+  tendenciaMayorista: varchar('tendencia_mayorista', { length: 4 }),
   actualizadoEn:   text('actualizado_en').notNull(),
 })
 

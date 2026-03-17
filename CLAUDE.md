@@ -52,6 +52,11 @@ scripts/
 - `configuracion`: clave (PK), valor — claves usadas: `polling_activo`, `polling_intervalo`, `mercado_hora_apertura`, `mercado_hora_cierre`
 - `dolar_snapshot`: fila única (id=1, siempre sobreescrita con upsert) — guarda el valor previo del dólar para calcular tendencia (↑↓) sin crecer la DB
 
+## Restricciones de infra — plan free
+- **Neon**: minimizar writes. Solo escribir a la DB cuando el dato realmente cambia. Nunca escribir por cada visita de usuario o por cada poll del cliente.
+- **Vercel**: evitar funciones serverless que se ejecuten por cada request de usuario si se puede resolver con cache o SSR.
+- Ante cualquier cambio que implique llamadas a DB o funciones serverless, **preguntar primero** cómo afecta el consumo.
+
 ## Convenciones
 - Idioma: español en UI y comentarios
 - Fechas siempre en timezone Argentina

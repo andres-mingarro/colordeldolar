@@ -115,33 +115,16 @@ export default function HomeClient({ initialData, inflacion }: Props) {
       .then(r => r.json())
       .then(prev => {
         if (prev) {
-          setTendencia(calcTendencia(initialData, {
-            blue:      { compra: Number(prev.blueCompra),      venta: Number(prev.blueVenta) },
-            oficial:   { compra: Number(prev.oficialCompra),   venta: Number(prev.oficialVenta) },
-            mep:       prev.mepVenta       ? { compra: Number(prev.mepCompra),       venta: Number(prev.mepVenta) }       : null,
-            tarjeta:   prev.tarjetaVenta   ? { compra: Number(prev.tarjetaCompra),   venta: Number(prev.tarjetaVenta) }   : null,
-            ccl:       prev.cclVenta       ? { compra: Number(prev.cclCompra),       venta: Number(prev.cclVenta) }       : null,
-            mayorista: prev.mayoristaVenta ? { compra: Number(prev.mayoristaCompra), venta: Number(prev.mayoristaVenta) } : null,
-          }))
+          // Usar tendencia persistida en DB (actualizada solo cuando el precio cambia)
+          setTendencia({
+            blue:      (prev.tendenciaBlue      as 'up' | 'down' | null) ?? null,
+            oficial:   (prev.tendenciaOficial   as 'up' | 'down' | null) ?? null,
+            mep:       (prev.tendenciaMep       as 'up' | 'down' | null) ?? null,
+            tarjeta:   (prev.tendenciaTarjeta   as 'up' | 'down' | null) ?? null,
+            ccl:       (prev.tendenciaCcl       as 'up' | 'down' | null) ?? null,
+            mayorista: (prev.tendenciaMayorista as 'up' | 'down' | null) ?? null,
+          })
         }
-        fetch('/api/dolar-snapshot', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            blueCompra:      initialData.blue.compra,
-            blueVenta:       initialData.blue.venta,
-            oficialCompra:   initialData.oficial.compra,
-            oficialVenta:    initialData.oficial.venta,
-            mepCompra:       initialData.mep?.compra       ?? null,
-            mepVenta:        initialData.mep?.venta        ?? null,
-            tarjetaCompra:   initialData.tarjeta?.compra   ?? null,
-            tarjetaVenta:    initialData.tarjeta?.venta    ?? null,
-            cclCompra:       initialData.ccl?.compra       ?? null,
-            cclVenta:        initialData.ccl?.venta        ?? null,
-            mayoristaCompra: initialData.mayorista?.compra ?? null,
-            mayoristaVenta:  initialData.mayorista?.venta  ?? null,
-          }),
-        })
       })
       .catch(() => {})
   // eslint-disable-next-line react-hooks/exhaustive-deps
