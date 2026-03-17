@@ -182,7 +182,7 @@ export default function HomeClient({ initialData, inflacion }: Props) {
         </Container>
       )}
 
-      {inflacion && <hr className="border-none h-px w-full mb-9" style={{ background: 'var(--border-subtle)' }} />}
+      {inflacion && <hr className="border-none h-px w-full mb-9" style={{ background: 'var(--border-subtle)', maxWidth: '600px', margin: '0 auto 2.25rem' }} />}
       {inflacion && <Inflacion data={inflacion} />}
 
       <PollingStatus
