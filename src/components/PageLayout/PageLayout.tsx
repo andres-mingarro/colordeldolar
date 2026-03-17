@@ -5,7 +5,7 @@ export default function PageLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Header />
-      <main className="flex flex-1 flex-col">
+      <main className="flex flex-1 flex-col mb-10">
         {children}
       </main>
       <Footer />

@@ -153,7 +153,7 @@ export default function HomeClient({ initialData, inflacion }: Props) {
       )}
 
       {data && (data.mep || data.tarjeta) && (
-        <Container tag="div" size="medium" mb="small" className="row-value row-value-group row-mep-tarjeta" classNameInner="flex flex-row gap-6 w-full">
+        <Container tag="div" size="medium" mb="small" className="row-value row-value-group row-mep-tarjeta" classNameInner="flex flex-col lg:flex-row gap-6 w-full">
           {data.mep && (
             <Card padding="small" className="dolar-mep flex flex-1 justify-center items-center gap-3">
               <MiniCotizacion label="Dólar MEP" compra={data.mep.compra} venta={data.mep.venta} tendencia={tendencia.mep} />
@@ -168,7 +168,7 @@ export default function HomeClient({ initialData, inflacion }: Props) {
       )}
 
       {data && (data.ccl || data.mayorista) && (
-        <Container tag="div" size="medium" className="row-value row-value-group row-ccl-mayorista" classNameInner="flex flex-row gap-6 w-full">
+        <Container tag="div" size="medium" className="row-value row-value-group row-ccl-mayorista" classNameInner="flex flex-col lg:flex-row gap-6 w-full">
           {data.ccl && (
             <Card padding="small" className="dolar-ccl flex flex-1 justify-center items-center gap-3">
               <MiniCotizacion label="Dólar CCL" compra={data.ccl.compra} venta={data.ccl.venta} tendencia={tendencia.ccl} />

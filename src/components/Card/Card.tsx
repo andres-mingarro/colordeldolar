@@ -1,8 +1,9 @@
 import { CSSProperties, ReactNode } from 'react'
 
-type Padding = 'default' | 'big' | 'small'
+type Padding = 'default' | 'big' | 'small' | 'none'
 
 const paddingClass: Record<Padding, string> = {
+  none:    '',
   small:   'px-3 py-2',
   default: 'px-5 py-3',
   big:     'px-10 py-7',

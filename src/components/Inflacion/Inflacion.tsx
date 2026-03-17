@@ -22,7 +22,7 @@ export default function Inflacion({ data }: Props) {
         <span className="text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>
           Inflación {anio}:
         </span>
-        <div className="content-date flex flex-col lg:flex-row gap-4 mt-2 lg:mt-0 w-full lg:w-auto">
+        <div className="content-date flex flex-col lg:flex-row items-center gap-4 mt-2 lg:mt-0 w-full lg:w-auto">
           <Stat label={mesCapitalizado} valor={mesActual.valor} trend={<Trend valor={tendencia} />} />
           <Divider />
           <Stat label="Acumulado año" valor={acumuladoAnio} />

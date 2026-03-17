@@ -1,5 +1,7 @@
 @use '../../styles/variables' as *;
 
+$lg: 1024px;
+
 @mixin container-base($size: 'default') {
   margin: 0 auto;
   padding: 0 $gap-x3;
@@ -9,6 +11,8 @@
   @if $size == 'default' { max-width: $max-container; }
   @if $size == 'medium'  { max-width: $max-container-medium; }
   @if $size == 'small'   { max-width: $max-container-small; }
+
+  @media (max-width: #{$lg - 1}) { max-width: 768px; }
 }
 
 .container,

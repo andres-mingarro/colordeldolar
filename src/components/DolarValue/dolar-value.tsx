@@ -16,8 +16,8 @@ interface DolarValueProps {
 export default function DolarValue({ titulo, compra, venta, color = 'neutral', tendencia, dummyUp, dummyDown }: DolarValueProps) {
   return (
     <Card
-      className="dolar-value flex flex-1 flex-col items-center rounded-2xl"
-      padding="big"
+      className="dolar-value flex flex-1 flex-col items-center gap-5 rounded-2xl px-5 py-5 max-lg:w-full"
+      padding="none"
       style={{
         background: `var(--v-${color}-bg)`,
         borderColor: `var(--v-${color}-border)`,
@@ -31,7 +31,7 @@ export default function DolarValue({ titulo, compra, venta, color = 'neutral', t
         <Trend valor={tendencia ?? null} dummyUp={dummyUp} dummyDown={dummyDown} />
       </span>
 
-      <div className="flex gap-10">
+      <div className="flex gap-10 max-lg:gap-3 items-center">
         <div className="flex flex-col items-center gap-1">
           <span className="text-xs uppercase tracking-wider text-muted-foreground">Compra</span>
           <span
@@ -41,6 +41,7 @@ export default function DolarValue({ titulo, compra, venta, color = 'neutral', t
             ${compra.toLocaleString('es-AR')}
           </span>
         </div>
+        <span className="hidden max-lg:block h-10 w-px self-center" style={{ background: `var(--v-${color}-border)` }} />
         <div className="flex flex-col items-center gap-1">
           <span className="text-xs uppercase tracking-wider text-muted-foreground">Venta</span>
           <span
