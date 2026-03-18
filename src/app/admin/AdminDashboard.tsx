@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CotizacionDiaria, DolarSnapshot } from '@/db/schema'
 import { Button } from '@/components/ui/button'
@@ -58,6 +58,19 @@ export default function AdminDashboard({
   driveFolderUrl,
 }: Props) {
   const router = useRouter()
+
+  const TABS = ['configuracion', 'instagram', 'x', 'cotizaciones']
+  const [tabActivo, setTabActivo] = useState('configuracion')
+
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (TABS.includes(hash)) setTabActivo(hash)
+  }, [])
+
+  function cambiarTab(tab: string) {
+    setTabActivo(tab)
+    window.history.replaceState(null, '', `#${tab}`)
+  }
 
   const [activo, setActivo] = useState(pollingActivo)
   const [intervalo, setIntervalo] = useState(pollingIntervalo)
@@ -180,7 +193,7 @@ export default function AdminDashboard({
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="configuracion" className="w-full">
+      <Tabs value={tabActivo} onValueChange={cambiarTab} className="w-full">
         <TabsList className="w-full">
           <TabsTrigger value="configuracion" className="flex-1">Configuración</TabsTrigger>
           <TabsTrigger value="instagram" className="flex-1">
