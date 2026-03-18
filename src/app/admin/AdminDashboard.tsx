@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
@@ -360,76 +361,82 @@ export default function AdminDashboard({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={guardarX} className="flex flex-col gap-5">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="x-apertura">Post de apertura</Label>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant={confirmando === 'apertura' ? 'destructive' : 'outline'}
-                        disabled={posteando !== null}
-                        onClick={() => confirmando === 'apertura' ? postManual('apertura') : pedirConfirmacion('apertura')}
-                      >
-                        {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost?.tipo === 'apertura' ? `Error: ${errorPost.msg}` : confirmando === 'apertura' ? '¿Confirmar?' : 'Post manual'}
-                      </Button>
-                      <Label htmlFor="x-apertura" className="text-xs text-muted-foreground">Auto</Label>
-                      <Switch
-                        id="x-apertura"
-                        checked={xApertura}
-                        onCheckedChange={setXApertura}
-                      />
-                    </div>
-                  </div>
-                  <Textarea
-                    value={msgApertura}
-                    onChange={e => setMsgApertura(e.target.value)}
-                    rows={10}
-                    className="font-mono text-sm"
-                  />
-                  <div className="flex items-end justify-between">
-                    <p className="text-xs text-muted-foreground">El contador incluye las variables como texto. El tweet real será más corto.</p>
-                    <p className={`text-xs shrink-0 ${msgApertura.length > 280 ? 'text-destructive font-medium' : msgApertura.length > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
-                      {msgApertura.length} / 280
-                    </p>
-                  </div>
-                </div>
+              <form onSubmit={guardarX} className="flex flex-col gap-4">
+                <Accordion type="multiple" className="w-full flex flex-col gap-2">
 
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="x-cierre">Post de cierre</Label>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant={confirmando === 'cierre' ? 'destructive' : 'outline'}
-                        disabled={posteando !== null}
-                        onClick={() => confirmando === 'cierre' ? postManual('cierre') : pedirConfirmacion('cierre')}
-                      >
-                        {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost?.tipo === 'cierre' ? `Error: ${errorPost.msg}` : confirmando === 'cierre' ? '¿Confirmar?' : 'Post manual'}
-                      </Button>
-                      <Label htmlFor="x-cierre" className="text-xs text-muted-foreground">Auto</Label>
-                      <Switch
-                        id="x-cierre"
-                        checked={xCierre}
-                        onCheckedChange={setXCierre}
+                  <AccordionItem value="apertura">
+                    <AccordionTrigger className="text-sm font-medium justify-start gap-2">
+                      Post de apertura
+                    </AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-3 pt-2">
+                      <Textarea
+                        value={msgApertura}
+                        onChange={e => setMsgApertura(e.target.value)}
+                        rows={10}
+                        className="font-mono text-sm"
                       />
-                    </div>
-                  </div>
-                  <Textarea
-                    value={msgCierre}
-                    onChange={e => setMsgCierre(e.target.value)}
-                    rows={10}
-                    className="font-mono text-sm"
-                  />
-                  <div className="flex items-end justify-between">
-                    <p className="text-xs text-muted-foreground">El contador incluye las variables como texto. El tweet real será más corto.</p>
-                    <p className={`text-xs shrink-0 ${msgCierre.length > 280 ? 'text-destructive font-medium' : msgCierre.length > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
-                      {msgCierre.length} / 280
-                    </p>
-                  </div>
-                </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <p className="text-xs text-muted-foreground">El contador incluye las variables como texto. El tweet real será más corto.</p>
+                        <p className={`text-xs shrink-0 ${msgApertura.length > 280 ? 'text-destructive font-medium' : msgApertura.length > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
+                          {msgApertura.length} / 280
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={confirmando === 'apertura' ? 'destructive' : 'outline'}
+                          disabled={posteando !== null}
+                          className="flex-1"
+                          onClick={() => confirmando === 'apertura' ? postManual('apertura') : pedirConfirmacion('apertura')}
+                        >
+                          {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost?.tipo === 'apertura' ? `Error: ${errorPost.msg}` : confirmando === 'apertura' ? '¿Confirmar?' : 'Post manual'}
+                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-xs text-muted-foreground">Auto</Label>
+                          <Switch checked={xApertura} onCheckedChange={setXApertura} />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="cierre">
+                    <AccordionTrigger className="text-sm font-medium justify-start gap-2">
+                      Post de cierre
+                    </AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-3 pt-2">
+                      <Textarea
+                        value={msgCierre}
+                        onChange={e => setMsgCierre(e.target.value)}
+                        rows={10}
+                        className="font-mono text-sm"
+                      />
+                      <div className="flex items-center justify-between gap-4">
+                        <p className="text-xs text-muted-foreground">El contador incluye las variables como texto. El tweet real será más corto.</p>
+                        <p className={`text-xs shrink-0 ${msgCierre.length > 280 ? 'text-destructive font-medium' : msgCierre.length > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
+                          {msgCierre.length} / 280
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={confirmando === 'cierre' ? 'destructive' : 'outline'}
+                          disabled={posteando !== null}
+                          className="flex-1"
+                          onClick={() => confirmando === 'cierre' ? postManual('cierre') : pedirConfirmacion('cierre')}
+                        >
+                          {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost?.tipo === 'cierre' ? `Error: ${errorPost.msg}` : confirmando === 'cierre' ? '¿Confirmar?' : 'Post manual'}
+                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-xs text-muted-foreground">Auto</Label>
+                          <Switch checked={xCierre} onCheckedChange={setXCierre} />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                </Accordion>
 
                 {errorPost?.detail && (
                   <p className="text-xs text-destructive break-all">{errorPost.detail}</p>
@@ -439,13 +446,14 @@ export default function AdminDashboard({
                   {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
                 </Button>
               </form>
-
-              <h3>ACA VA</h3>
               {xUltimoTweetId && (
-                <div className="mt-6">
-                  <p className="text-sm font-medium mb-3">Último tweet publicado</p>
-                  <TweetEmbed id={xUltimoTweetId} />
-                </div>
+                <>
+                  <hr className="border-border mt-6" />
+                  <div className="mt-6">
+                    <h4 className="text-sm font-medium mb-3">Último tweet publicado</h4>
+                    <TweetEmbed id={xUltimoTweetId} />
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
