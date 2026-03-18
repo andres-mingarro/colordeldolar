@@ -107,13 +107,13 @@ export default function AdminDashboard({
   }
 
   const [generandoImagen, setGenerandoImagen] = useState<'inicio' | 'final' | null>(null)
-  const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string; driveUrl: string } | null>(null)
-  const [errorImagen, setErrorImagen] = useState(false)
+  const [imagenGenerada, setImagenGenerada] = useState<{ nombre: string; preview: string; driveUrl: string; driveError?: string } | null>(null)
+  const [errorImagen, setErrorImagen] = useState<string | null>(null)
 
   async function generarImagen(tipo: 'inicio' | 'final') {
     setGenerandoImagen(tipo)
     setImagenGenerada(null)
-    setErrorImagen(false)
+    setErrorImagen(null)
     const res = await fetch('/api/admin/imagen', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -122,9 +122,10 @@ export default function AdminDashboard({
     setGenerandoImagen(null)
     if (res.ok) {
       const data = await res.json()
-      setImagenGenerada({ nombre: data.nombre, preview: data.preview, driveUrl: data.driveUrl })
+      setImagenGenerada({ nombre: data.nombre, preview: data.preview, driveUrl: data.driveUrl, driveError: data.driveError ?? null })
     } else {
-      setErrorImagen(true)
+      const data = await res.json().catch(() => ({}))
+      setErrorImagen(data.error ?? 'Error desconocido')
     }
   }
 
@@ -290,14 +291,17 @@ export default function AdminDashboard({
                       Ver carpeta en Drive
                     </a>
                   </Button>
-                  {imagenGenerada && (
+                  {imagenGenerada && !imagenGenerada.driveError && (
                     <div className="flex items-center gap-2 rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       <span className="text-sm text-green-500 font-medium">{imagenGenerada.nombre}</span>
                     </div>
                   )}
+                  {imagenGenerada?.driveError && (
+                    <p className="text-sm text-yellow-500">Imagen generada, pero falló Drive. Revisá las variables de entorno de Google.</p>
+                  )}
                   {errorImagen && (
-                    <p className="text-sm text-destructive">Error al generar la imagen.</p>
+                    <p className="text-sm text-destructive">Error: {errorImagen}</p>
                   )}
                 </div>
 

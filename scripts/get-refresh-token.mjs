@@ -1,8 +1,13 @@
 import { google } from 'googleapis'
 import http from 'http'
 import { createInterface } from 'readline'
+import dotenv from 'dotenv'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-// Completar con los valores del JSON descargado de Google Cloud Console
+const __dirname = dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: resolve(__dirname, '..', '.env.local') })
+
 const CLIENT_ID = process.env.GOOGLE_OAUTH_CLIENT_ID || 'TU_CLIENT_ID'
 const CLIENT_SECRET = process.env.GOOGLE_OAUTH_CLIENT_SECRET || 'TU_CLIENT_SECRET'
 const REDIRECT_URI = 'http://localhost:4567'

@@ -29,17 +29,30 @@ export async function POST(req: NextRequest) {
   const oficial = await oficialRes.json()
   const fecha = fechaHoyAR()
 
-  const buffer = await generarImagenDolar({ blue, oficial, fecha, tipo })
+  let buffer: Buffer
+  try {
+    buffer = await generarImagenDolar({ blue, oficial, fecha, tipo })
+  } catch (err) {
+    console.error('[imagen] Error al generar:', err)
+    return NextResponse.json({ error: 'Error al generar imagen', detail: String(err) }, { status: 500 })
+  }
 
   const dia = DIAS[new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE })).getDay()]
   const nombre = `${dia}-${tipo}.png`
 
-  await subirImagenDrive(buffer, nombre)
+  let driveError: string | null = null
+  try {
+    await subirImagenDrive(buffer, nombre)
+  } catch (err) {
+    console.error('[imagen] Error al subir a Drive:', err)
+    driveError = String(err)
+  }
 
   return NextResponse.json({
     ok: true,
     nombre,
     preview: buffer.toString('base64'),
     driveUrl: `https://drive.google.com/drive/folders/${process.env.GOOGLE_DRIVE_FOLDER_ID}`,
+    driveError,
   })
 }
