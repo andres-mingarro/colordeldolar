@@ -1,5 +1,8 @@
 import HomeClient from './HomeClient'
 import { fetchInflacionData } from './api/inflacion/route'
+import { db } from '@/db'
+import { dolarSnapshot } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
 async function getInitialDolar() {
   try {
@@ -25,8 +28,17 @@ async function getInitialDolar() {
   }
 }
 
+async function getSnapshot() {
+  try {
+    const rows = await db.select().from(dolarSnapshot).where(eq(dolarSnapshot.id, 1))
+    return rows[0] ?? null
+  } catch {
+    return null
+  }
+}
+
 export default async function Home() {
-  const [initialData, inflacion] = await Promise.all([getInitialDolar(), fetchInflacionData()])
+  const [initialData, inflacion, snapshot] = await Promise.all([getInitialDolar(), fetchInflacionData(), getSnapshot()])
 
   const websiteJsonLd = {
     '@context': 'https://schema.org',
@@ -78,7 +90,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HomeClient initialData={initialData} inflacion={inflacion} />
+      <HomeClient initialData={initialData} inflacion={inflacion} snapshot={snapshot} />
     </>
   )
 }

@@ -24,13 +24,16 @@ export async function POST(req: NextRequest) {
     fetch('https://dolarapi.com/v1/dolares/mayorista', { cache: 'no-store' }),
   ])
 
-  if (!blueRes.ok || !oficialRes.ok || !bolsaRes.ok || !tarjetaRes.ok || !cclRes.ok || !mayoristaRes.ok) {
+  if (!blueRes.ok || !oficialRes.ok) {
     return NextResponse.json({ error: 'Error al obtener cotizaciones' }, { status: 502 })
   }
 
   const [blue, oficial, bolsa, tarjeta, ccl, mayorista] = await Promise.all([
-    blueRes.json(), oficialRes.json(), bolsaRes.json(),
-    tarjetaRes.json(), cclRes.json(), mayoristaRes.json(),
+    blueRes.json(), oficialRes.json(),
+    bolsaRes.ok ? bolsaRes.json() : null,
+    tarjetaRes.ok ? tarjetaRes.json() : null,
+    cclRes.ok ? cclRes.json() : null,
+    mayoristaRes.ok ? mayoristaRes.json() : null,
   ])
 
   const now = new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE }))
@@ -42,14 +45,14 @@ export async function POST(req: NextRequest) {
     blueVenta: blue.venta,
     oficialCompra: oficial.compra,
     oficialVenta: oficial.venta,
-    bolsaCompra: bolsa.compra,
-    bolsaVenta: bolsa.venta,
-    tarjetaCompra: tarjeta.compra,
-    tarjetaVenta: tarjeta.venta,
-    cclCompra: ccl.compra,
-    cclVenta: ccl.venta,
-    mayoristaCompra: mayorista.compra,
-    mayoristaVenta: mayorista.venta,
+    bolsaCompra: bolsa?.compra ?? '',
+    bolsaVenta: bolsa?.venta ?? '',
+    tarjetaCompra: tarjeta?.compra ?? '',
+    tarjetaVenta: tarjeta?.venta ?? '',
+    cclCompra: ccl?.compra ?? '',
+    cclVenta: ccl?.venta ?? '',
+    mayoristaCompra: mayorista?.compra ?? '',
+    mayoristaVenta: mayorista?.venta ?? '',
     time,
     fecha,
   })

@@ -8,6 +8,7 @@ import Container from '@/components/Container/Container'
 import Card from '@/components/Card/Card'
 import Trend from '@/components/Trend/Trend'
 import type { InflacionData } from '@/app/api/inflacion/route'
+import type { DolarSnapshot } from '@/db/schema'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
 
 interface DolarData {
@@ -27,9 +28,10 @@ interface DolarResponse {
 interface Props {
   initialData: DolarResponse | null
   inflacion: InflacionData | null
+  snapshot: DolarSnapshot | null
 }
 
-export default function HomeClient({ initialData, inflacion }: Props) {
+export default function HomeClient({ initialData, inflacion, snapshot }: Props) {
   const [data, setData] = useState<DolarResponse | null>(initialData)
   const prevDataRef = useRef<DolarResponse | null>(initialData)
 
@@ -45,7 +47,14 @@ export default function HomeClient({ initialData, inflacion }: Props) {
     }
   }
 
-  const [tendencia, setTendencia] = useState<{ blue: 'up' | 'down' | null; oficial: 'up' | 'down' | null; mep: 'up' | 'down' | null; tarjeta: 'up' | 'down' | null; ccl: 'up' | 'down' | null; mayorista: 'up' | 'down' | null }>({ blue: null, oficial: null, mep: null, tarjeta: null, ccl: null, mayorista: null })
+  const [tendencia, setTendencia] = useState({
+    blue:      (snapshot?.tendenciaBlue      as 'up' | 'down' | null) ?? null,
+    oficial:   (snapshot?.tendenciaOficial   as 'up' | 'down' | null) ?? null,
+    mep:       (snapshot?.tendenciaMep       as 'up' | 'down' | null) ?? null,
+    tarjeta:   (snapshot?.tendenciaTarjeta   as 'up' | 'down' | null) ?? null,
+    ccl:       (snapshot?.tendenciaCcl       as 'up' | 'down' | null) ?? null,
+    mayorista: (snapshot?.tendenciaMayorista as 'up' | 'down' | null) ?? null,
+  })
   const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
   const [mercadoAbierto, setMercadoAbierto] = useState(false)
   const [cargando, setCargando] = useState(initialData === null)
@@ -108,27 +117,6 @@ export default function HomeClient({ initialData, inflacion }: Props) {
   useEffect(() => {
     if (initialData) setUltimaActualizacion(new Date().toLocaleTimeString('es-AR'))
   }, [initialData])
-
-  useEffect(() => {
-    if (!initialData) return
-    fetch('/api/dolar-snapshot')
-      .then(r => r.json())
-      .then(prev => {
-        if (prev) {
-          // Usar tendencia persistida en DB (actualizada solo cuando el precio cambia)
-          setTendencia({
-            blue:      (prev.tendenciaBlue      as 'up' | 'down' | null) ?? null,
-            oficial:   (prev.tendenciaOficial   as 'up' | 'down' | null) ?? null,
-            mep:       (prev.tendenciaMep       as 'up' | 'down' | null) ?? null,
-            tarjeta:   (prev.tendenciaTarjeta   as 'up' | 'down' | null) ?? null,
-            ccl:       (prev.tendenciaCcl       as 'up' | 'down' | null) ?? null,
-            mayorista: (prev.tendenciaMayorista as 'up' | 'down' | null) ?? null,
-          })
-        }
-      })
-      .catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (initialData === null) fetchDolar()
