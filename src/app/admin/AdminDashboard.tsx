@@ -159,6 +159,7 @@ export default function AdminDashboard({
     setGuardandoX(false)
     setGuardadoX(true)
     setTimeout(() => setGuardadoX(false), 2000)
+    router.refresh()
   }
 
   async function logout() {
