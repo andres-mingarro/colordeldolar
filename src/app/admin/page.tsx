@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { cotizacionesDiarias, configuracion } from '@/db/schema'
+import { cotizacionesDiarias, configuracion, dolarSnapshot } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { fechaHoyAR } from '@/lib/fecha'
 import AdminDashboard from './AdminDashboard'
@@ -31,16 +31,19 @@ https://colordeldolar.com.ar`
 export default async function AdminPage() {
   const hoy = fechaHoyAR()
 
-  const [cotizacionesHoy, configRows] = await Promise.all([
+  const [cotizacionesHoy, configRows, snapshotRows] = await Promise.all([
     db.select().from(cotizacionesDiarias).where(eq(cotizacionesDiarias.fecha, hoy)),
     db.select().from(configuracion),
+    db.select().from(dolarSnapshot).limit(1),
   ])
+  const snapshot = snapshotRows[0] ?? null
 
   const cfg = Object.fromEntries(configRows.map(r => [r.clave, r.valor]))
 
   return (
     <AdminDashboard
       cotizaciones={cotizacionesHoy}
+      snapshot={snapshot}
       pollingActivo={cfg.polling_activo !== 'false'}
       pollingIntervalo={Math.max(1, parseInt(cfg.polling_intervalo ?? '1', 10) || 1)}
       mercadoHoraApertura={cfg.mercado_hora_apertura ?? '10:00'}

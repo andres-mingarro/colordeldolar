@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type { CotizacionDiaria } from '@/db/schema'
+import type { CotizacionDiaria, DolarSnapshot } from '@/db/schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -22,6 +22,7 @@ import {
 
 interface Props {
   cotizaciones: CotizacionDiaria[]
+  snapshot: DolarSnapshot | null
   pollingActivo: boolean
   pollingIntervalo: number
   mercadoHoraApertura: string
@@ -45,6 +46,7 @@ function variacion(apertura: string, cierre: string) {
 
 export default function AdminDashboard({
   cotizaciones,
+  snapshot,
   pollingActivo,
   pollingIntervalo,
   mercadoHoraApertura,
@@ -73,8 +75,18 @@ export default function AdminDashboard({
   const [posteando, setPosteando] = useState<'apertura' | 'cierre' | null>(null)
   const [posteado, setPosteado] = useState<'apertura' | 'cierre' | null>(null)
   const [errorPost, setErrorPost] = useState<'apertura' | 'cierre' | null>(null)
+  const [confirmando, setConfirmando] = useState<'apertura' | 'cierre' | null>(null)
+  const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function pedirConfirmacion(tipo: 'apertura' | 'cierre') {
+    if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current)
+    setConfirmando(tipo)
+    confirmTimerRef.current = setTimeout(() => setConfirmando(null), 3000)
+  }
 
   async function postManual(tipo: 'apertura' | 'cierre') {
+    if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current)
+    setConfirmando(null)
     setPosteando(tipo)
     setPosteado(null)
     setErrorPost(null)
@@ -168,7 +180,14 @@ export default function AdminDashboard({
       <Tabs defaultValue="configuracion" className="w-full">
         <TabsList className="w-full">
           <TabsTrigger value="configuracion" className="flex-1">Configuración</TabsTrigger>
-          <TabsTrigger value="instagram" className="flex-1">Instagram</TabsTrigger>
+          <TabsTrigger value="instagram" className="flex-1">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5 shrink-0">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            Instagram
+          </TabsTrigger>
           <TabsTrigger value="x" className="flex-1">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="mr-1.5 shrink-0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             Opciones
@@ -243,14 +262,6 @@ export default function AdminDashboard({
         <TabsContent value="instagram">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                  <circle cx="12" cy="12" r="4"/>
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-                </svg>
-                Imagen para Instagram
-              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex gap-6 items-start">
@@ -336,11 +347,11 @@ export default function AdminDashboard({
                       <Button
                         type="button"
                         size="sm"
-                        variant="outline"
+                        variant={confirmando === 'apertura' ? 'destructive' : 'outline'}
                         disabled={posteando !== null}
-                        onClick={() => postManual('apertura')}
+                        onClick={() => confirmando === 'apertura' ? postManual('apertura') : pedirConfirmacion('apertura')}
                       >
-                        {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost === 'apertura' ? 'Error' : 'Post manual'}
+                        {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost === 'apertura' ? 'Error' : confirmando === 'apertura' ? '¿Confirmar?' : 'Post manual'}
                       </Button>
                       <Label htmlFor="x-apertura" className="text-xs text-muted-foreground">Auto</Label>
                       <Switch
@@ -371,11 +382,11 @@ export default function AdminDashboard({
                       <Button
                         type="button"
                         size="sm"
-                        variant="outline"
+                        variant={confirmando === 'cierre' ? 'destructive' : 'outline'}
                         disabled={posteando !== null}
-                        onClick={() => postManual('cierre')}
+                        onClick={() => confirmando === 'cierre' ? postManual('cierre') : pedirConfirmacion('cierre')}
                       >
-                        {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost === 'cierre' ? 'Error' : 'Post manual'}
+                        {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost === 'cierre' ? 'Error' : confirmando === 'cierre' ? '¿Confirmar?' : 'Post manual'}
                       </Button>
                       <Label htmlFor="x-cierre" className="text-xs text-muted-foreground">Auto</Label>
                       <Switch
@@ -416,7 +427,8 @@ export default function AdminDashboard({
                 Valores de apertura y cierre registrados hoy. La variación compara el precio de venta al cierre vs. la apertura.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-col gap-6">
+              {/* Blue y Oficial — con apertura/cierre/variación */}
               {cotizaciones.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Sin datos por hoy.</p>
               ) : (
@@ -450,6 +462,36 @@ export default function AdminDashboard({
                           </TableRow>
                         )
                       })}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+
+              {/* MEP, Tarjeta, CCL, Mayorista — valores actuales del snapshot */}
+              {snapshot && (
+                <div className="overflow-x-auto">
+                  <p className="text-xs text-muted-foreground mb-2">Valores actuales · {snapshot.actualizadoEn}</p>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Compra</TableHead>
+                        <TableHead>Venta</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {[
+                        { label: 'MEP', compra: snapshot.mepCompra, venta: snapshot.mepVenta },
+                        { label: 'Tarjeta', compra: snapshot.tarjetaCompra, venta: snapshot.tarjetaVenta },
+                        { label: 'CCL', compra: snapshot.cclCompra, venta: snapshot.cclVenta },
+                        { label: 'Mayorista', compra: snapshot.mayoristaCompra, venta: snapshot.mayoristaVenta },
+                      ].map(({ label, compra, venta }) => (
+                        <TableRow key={label}>
+                          <TableCell><Badge variant="outline">{label}</Badge></TableCell>
+                          <TableCell>{compra ? `$${Number(compra).toLocaleString('es-AR')}` : '—'}</TableCell>
+                          <TableCell>{venta ? `$${Number(venta).toLocaleString('es-AR')}` : '—'}</TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
