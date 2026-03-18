@@ -74,7 +74,7 @@ export default function AdminDashboard({
   const [guardadoX, setGuardadoX] = useState(false)
   const [posteando, setPosteando] = useState<'apertura' | 'cierre' | null>(null)
   const [posteado, setPosteado] = useState<'apertura' | 'cierre' | null>(null)
-  const [errorPost, setErrorPost] = useState<{ tipo: 'apertura' | 'cierre'; msg: string } | null>(null)
+  const [errorPost, setErrorPost] = useState<{ tipo: 'apertura' | 'cierre'; msg: string; detail?: string } | null>(null)
   const [confirmando, setConfirmando] = useState<'apertura' | 'cierre' | null>(null)
   const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -102,7 +102,7 @@ export default function AdminDashboard({
       setTimeout(() => setPosteado(null), 3000)
     } else {
       const data = await res.json().catch(() => ({}))
-      setErrorPost({ tipo, msg: data.error ?? 'Error desconocido' })
+      setErrorPost({ tipo, msg: data.error ?? 'Error desconocido', detail: data.detail })
       setTimeout(() => setErrorPost(null), 5000)
     }
   }
@@ -415,6 +415,10 @@ export default function AdminDashboard({
                     </p>
                   </div>
                 </div>
+
+                {errorPost?.detail && (
+                  <p className="text-xs text-destructive break-all">{errorPost.detail}</p>
+                )}
 
                 <Button type="submit" disabled={guardandoX} className="w-full">
                   {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
