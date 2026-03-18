@@ -74,7 +74,7 @@ export default function AdminDashboard({
   const [guardadoX, setGuardadoX] = useState(false)
   const [posteando, setPosteando] = useState<'apertura' | 'cierre' | null>(null)
   const [posteado, setPosteado] = useState<'apertura' | 'cierre' | null>(null)
-  const [errorPost, setErrorPost] = useState<'apertura' | 'cierre' | null>(null)
+  const [errorPost, setErrorPost] = useState<{ tipo: 'apertura' | 'cierre'; msg: string } | null>(null)
   const [confirmando, setConfirmando] = useState<'apertura' | 'cierre' | null>(null)
   const confirmTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -101,8 +101,9 @@ export default function AdminDashboard({
       setPosteado(tipo)
       setTimeout(() => setPosteado(null), 3000)
     } else {
-      setErrorPost(tipo)
-      setTimeout(() => setErrorPost(null), 3000)
+      const data = await res.json().catch(() => ({}))
+      setErrorPost({ tipo, msg: data.error ?? 'Error desconocido' })
+      setTimeout(() => setErrorPost(null), 5000)
     }
   }
 
@@ -356,7 +357,7 @@ export default function AdminDashboard({
                         disabled={posteando !== null}
                         onClick={() => confirmando === 'apertura' ? postManual('apertura') : pedirConfirmacion('apertura')}
                       >
-                        {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost === 'apertura' ? 'Error' : confirmando === 'apertura' ? '¿Confirmar?' : 'Post manual'}
+                        {posteando === 'apertura' ? 'Posteando…' : posteado === 'apertura' ? '✓ Enviado' : errorPost?.tipo === 'apertura' ? `Error: ${errorPost.msg}` : confirmando === 'apertura' ? '¿Confirmar?' : 'Post manual'}
                       </Button>
                       <Label htmlFor="x-apertura" className="text-xs text-muted-foreground">Auto</Label>
                       <Switch
@@ -391,7 +392,7 @@ export default function AdminDashboard({
                         disabled={posteando !== null}
                         onClick={() => confirmando === 'cierre' ? postManual('cierre') : pedirConfirmacion('cierre')}
                       >
-                        {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost === 'cierre' ? 'Error' : confirmando === 'cierre' ? '¿Confirmar?' : 'Post manual'}
+                        {posteando === 'cierre' ? 'Posteando…' : posteado === 'cierre' ? '✓ Enviado' : errorPost?.tipo === 'cierre' ? `Error: ${errorPost.msg}` : confirmando === 'cierre' ? '¿Confirmar?' : 'Post manual'}
                       </Button>
                       <Label htmlFor="x-cierre" className="text-xs text-muted-foreground">Auto</Label>
                       <Switch

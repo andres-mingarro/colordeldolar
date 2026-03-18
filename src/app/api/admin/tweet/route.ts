@@ -57,7 +57,12 @@ export async function POST(req: NextRequest) {
     fecha,
   })
 
-  await postTweet(texto)
+  try {
+    await postTweet(texto)
+  } catch (err) {
+    console.error('[tweet] Error al postear:', err)
+    return NextResponse.json({ error: 'Error al postear en X', detail: String(err) }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }
