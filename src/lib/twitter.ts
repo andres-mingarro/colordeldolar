@@ -36,12 +36,13 @@ export function buildTweetText(
     .replace(/\[fecha\]/g, vars.fecha)
 }
 
-export async function postTweet(text: string) {
+export async function postTweet(text: string): Promise<string> {
   const client = new TwitterApi({
     appKey: process.env.TWITTER_API_KEY!,
     appSecret: process.env.TWITTER_API_SECRET!,
     accessToken: process.env.TWITTER_ACCESS_TOKEN!,
     accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET!,
   })
-  await client.v2.tweet(text)
+  const { data } = await client.v2.tweet(text)
+  return data.id
 }

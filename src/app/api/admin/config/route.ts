@@ -15,6 +15,7 @@ export async function GET() {
     x_msg_apertura:        cfg.x_msg_apertura        ?? '',
     x_post_cierre:         cfg.x_post_cierre         ?? 'false',
     x_msg_cierre:          cfg.x_msg_cierre          ?? '',
+    x_ultimo_tweet_id:     cfg.x_ultimo_tweet_id     ?? '',
   })
 }
 

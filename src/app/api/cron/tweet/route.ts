@@ -94,7 +94,15 @@ export async function GET(req: NextRequest) {
     fecha,
   })
 
-  await postTweet(texto)
+  const tweetId = await postTweet(texto)
+
+  await db
+    .insert(configuracion)
+    .values({ clave: 'x_ultimo_tweet_id', valor: tweetId })
+    .onConflictDoUpdate({
+      target: configuracion.clave,
+      set: { valor: sql`excluded.valor` },
+    })
 
   return NextResponse.json({ ok: true, tipo, fecha: fechaHoy })
 }

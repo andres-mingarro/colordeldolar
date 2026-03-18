@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sql } from 'drizzle-orm'
+import { db } from '@/db'
+import { configuracion } from '@/db/schema'
 import { verifyAdminToken } from '@/lib/auth'
 import { buildTweetText, postTweet } from '@/lib/twitter'
 import { TIMEZONE } from '@/lib/market-hours'
@@ -57,12 +60,21 @@ export async function POST(req: NextRequest) {
     fecha,
   })
 
+  let tweetId: string
   try {
-    await postTweet(texto)
+    tweetId = await postTweet(texto)
   } catch (err) {
     console.error('[tweet] Error al postear:', err)
     return NextResponse.json({ error: 'Error al postear en X', detail: String(err) }, { status: 500 })
   }
+
+  await db
+    .insert(configuracion)
+    .values({ clave: 'x_ultimo_tweet_id', valor: tweetId })
+    .onConflictDoUpdate({
+      target: configuracion.clave,
+      set: { valor: sql`excluded.valor` },
+    })
 
   return NextResponse.json({ ok: true })
 }

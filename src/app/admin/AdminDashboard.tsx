@@ -31,6 +31,7 @@ interface Props {
   xMsgApertura: string
   xPostCierre: boolean
   xMsgCierre: string
+  xUltimoTweetId: string
   driveFolderUrl: string
 }
 
@@ -55,6 +56,7 @@ export default function AdminDashboard({
   xMsgApertura,
   xPostCierre,
   xMsgCierre,
+  xUltimoTweetId,
   driveFolderUrl,
 }: Props) {
   const router = useRouter()
@@ -437,6 +439,13 @@ export default function AdminDashboard({
                   {guardandoX ? 'Guardando…' : guardadoX ? '✓ Guardado' : 'Guardar'}
                 </Button>
               </form>
+
+              {xUltimoTweetId && (
+                <div className="mt-6">
+                  <p className="text-sm font-medium mb-3">Último tweet publicado</p>
+                  <TweetEmbed id={xUltimoTweetId} />
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -525,6 +534,35 @@ export default function AdminDashboard({
       </Tabs>
     </div>
   )
+}
+
+function TweetEmbed({ id }: { id: string }) {
+  const ref = React.useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.innerHTML = ''
+
+    const blockquote = document.createElement('blockquote')
+    blockquote.className = 'twitter-tweet'
+    blockquote.setAttribute('data-dnt', 'true')
+    const a = document.createElement('a')
+    a.href = `https://twitter.com/i/status/${id}`
+    blockquote.appendChild(a)
+    ref.current.appendChild(blockquote)
+
+    // Cargar o re-renderizar el widget
+    if ((window as any).twttr?.widgets) {
+      (window as any).twttr.widgets.load(ref.current)
+    } else {
+      const script = document.createElement('script')
+      script.src = 'https://platform.twitter.com/widgets.js'
+      script.async = true
+      document.body.appendChild(script)
+    }
+  }, [id])
+
+  return <div ref={ref} className="flex justify-center" />
 }
 
 function AnimatedDots() {
