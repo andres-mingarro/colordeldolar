@@ -16,7 +16,7 @@ function minutosDelDia(date: Date): number {
   return date.getHours() * 60 + date.getMinutes()
 }
 
-export function esMercadoAbierto(horaApertura = '09:00', horaCierre = '18:00'): boolean {
+export function esMercadoAbierto(horaApertura = '10:30', horaCierre = '17:00'): boolean {
   if (FORCE_POLLING) return true
 
   const ahora = ahoraEnArgentina()
@@ -31,7 +31,7 @@ export function esMercadoAbierto(horaApertura = '09:00', horaCierre = '18:00'): 
   return minActual >= hA * 60 + mA && minActual < hC * 60 + mC
 }
 
-export function esDespuesCierre(horaCierre = '18:00'): boolean {
+export function esDespuesCierre(horaCierre = '17:00'): boolean {
   const ahora = ahoraEnArgentina()
   const dia = ahora.getDay()
   if (dia === 0 || dia === 6) return false
@@ -40,7 +40,7 @@ export function esDespuesCierre(horaCierre = '18:00'): boolean {
   return minutosDelDia(ahora) >= hC * 60 + mC
 }
 
-export function msHastaProximaApertura(horaApertura = '09:00', horaCierre = '18:00'): number {
+export function msHastaProximaApertura(horaApertura = '10:30', horaCierre = '17:00'): number {
   const ahora = ahoraEnArgentina()
   const dia = ahora.getDay()
 

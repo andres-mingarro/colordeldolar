@@ -9,8 +9,8 @@ export async function GET() {
   return NextResponse.json({
     polling_activo:        cfg.polling_activo        ?? 'true',
     polling_intervalo:     cfg.polling_intervalo     ?? '1',
-    mercado_hora_apertura: cfg.mercado_hora_apertura ?? '10:00',
-    mercado_hora_cierre:   cfg.mercado_hora_cierre   ?? '18:00',
+    mercado_hora_apertura: cfg.mercado_hora_apertura ?? '10:30',
+    mercado_hora_cierre:   cfg.mercado_hora_cierre   ?? '17:00',
     x_post_apertura:       cfg.x_post_apertura       ?? 'false',
     x_msg_apertura:        cfg.x_msg_apertura        ?? '',
     x_post_cierre:         cfg.x_post_cierre         ?? 'false',

@@ -2,20 +2,20 @@
   "buildCommand": "next build",
   "crons": [
     {
-      "path": "/api/cron/imagen",
-      "schedule": "10 12 * * 1-5"
-    },
-    {
-      "path": "/api/cron/imagen",
-      "schedule": "10 21 * * 1-5"
-    },
-    {
       "path": "/api/cron/tweet?tipo=apertura",
-      "schedule": "5 12 * * 1-5"
+      "schedule": "30 13 * * 1-5"
+    },
+    {
+      "path": "/api/cron/imagen",
+      "schedule": "35 13 * * 1-5"
     },
     {
       "path": "/api/cron/tweet?tipo=cierre",
-      "schedule": "0 21 * * 1-5"
+      "schedule": "0 20 * * 1-5"
+    },
+    {
+      "path": "/api/cron/imagen",
+      "schedule": "5 20 * * 1-5"
     }
   ]
 }
