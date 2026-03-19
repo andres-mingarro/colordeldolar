@@ -9,14 +9,15 @@ import { TIMEZONE } from '@/lib/market-hours'
 
 const DIAS = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']
 
-// Ventana en minutos dentro de la cual se acepta la ejecución del cron
-const MINUTOS_DESPUES = 10
-const VENTANA_MINUTOS = 6
-
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  const tipo = (req.nextUrl.searchParams.get('tipo') ?? 'inicio') as 'inicio' | 'final'
+  if (tipo !== 'inicio' && tipo !== 'final') {
+    return NextResponse.json({ error: 'tipo debe ser inicio o final' }, { status: 400 })
   }
 
   const ahora = new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE }))
@@ -29,33 +30,8 @@ export async function GET(req: NextRequest) {
   const rows = await db.select().from(configuracion)
   const cfg = Object.fromEntries(rows.map(r => [r.clave, r.valor]))
 
-  const horaApertura = cfg.mercado_hora_apertura ?? '09:00'
-  const horaCierre = cfg.mercado_hora_cierre ?? '18:00'
-
   const fechaHoy = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`
-  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes()
 
-  const [hA, mA] = horaApertura.split(':').map(Number)
-  const minutosApertura = (hA ?? 9) * 60 + (mA ?? 0)
-  const minutosDesdeApertura = minutosAhora - minutosApertura
-
-  const [hC, mC] = horaCierre.split(':').map(Number)
-  const minutosCierre = (hC ?? 18) * 60 + (mC ?? 0)
-  const minutosDeadeCierre = minutosAhora - minutosCierre
-
-  const esVentanaInicio = minutosDesdeApertura >= MINUTOS_DESPUES && minutosDesdeApertura <= MINUTOS_DESPUES + VENTANA_MINUTOS
-  const esVentanaCierre = minutosDeadeCierre >= MINUTOS_DESPUES && minutosDeadeCierre <= MINUTOS_DESPUES + VENTANA_MINUTOS
-
-  if (!esVentanaInicio && !esVentanaCierre) {
-    return NextResponse.json({
-      skip: 'fuera de ventana',
-      minutosDesdeApertura,
-      minutosDeadeCierre,
-      ventana: `${MINUTOS_DESPUES}–${MINUTOS_DESPUES + VENTANA_MINUTOS} min después de apertura o cierre`,
-    })
-  }
-
-  const tipo = esVentanaInicio ? 'inicio' : 'final'
   const guardKey = tipo === 'inicio' ? 'imagen_ultima_generacion' : 'imagen_cierre_ultima_generacion'
 
   if (cfg[guardKey] === fechaHoy) {
