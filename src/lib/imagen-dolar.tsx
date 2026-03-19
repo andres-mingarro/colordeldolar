@@ -36,7 +36,7 @@ export async function generarImagenDolar({ blue, oficial, fecha, tipo }: Params)
         style={{
           width: 1080,
           height: 1920,
-          background: '#181818',
+          background: tipo === 'inicio' ? '#00291b' : '#1a0000',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -49,9 +49,10 @@ export async function generarImagenDolar({ blue, oficial, fecha, tipo }: Params)
       >
         {/* Título */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '48px' }}>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+          <div style={{ fontSize: 33, fontWeight: 700, color: tipo === 'inicio' ? '#008b5d' : '#bb0000', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
             {tipo === 'inicio' ? 'Apertura' : 'Cierre'}
           </div>
+          <div style={{ width: 400, height: 1, background: tipo === 'inicio' ? '#008b5d' : '#bb0000', alignSelf: 'center', marginTop: '18px', marginBottom: '32px' }} />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={LOGO_DATA_URI} width={800} height={89} alt="Color del Dólar" />
           <div style={{ fontSize: 28, color: '#71717a' }}>{fecha}</div>
