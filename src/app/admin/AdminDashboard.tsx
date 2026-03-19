@@ -33,6 +33,10 @@ interface Props {
   xPostCierre: boolean
   xMsgCierre: string
   xUltimoTweetId: string
+  xAperturaPosteadaHoy: boolean
+  xCierrePosteadoHoy: boolean
+  imagenAperturaGeneradaHoy: boolean
+  imagenCierreGeneradaHoy: boolean
   driveFolderUrl: string
 }
 
@@ -58,6 +62,10 @@ export default function AdminDashboard({
   xPostCierre,
   xMsgCierre,
   xUltimoTweetId,
+  xAperturaPosteadaHoy,
+  xCierrePosteadoHoy,
+  imagenAperturaGeneradaHoy,
+  imagenCierreGeneradaHoy,
   driveFolderUrl,
 }: Props) {
   const router = useRouter()
@@ -286,7 +294,12 @@ export default function AdminDashboard({
               <div className="flex gap-6 items-start">
                 {/* Botones + mensajes */}
                 <div className="flex flex-col gap-3 flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Generar imágenes manualmente</p>
+                  <div className="rounded-lg border border-border p-3 flex flex-col gap-2">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado automático · hoy</p>
+                    <CronStatus label="Apertura · 10:35 hs" ok={imagenAperturaGeneradaHoy} okText="Generada" />
+                    <CronStatus label="Cierre · 17:05 hs" ok={imagenCierreGeneradaHoy} okText="Generada" />
+                  </div>
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Generar manualmente</p>
                   <Button
                     onClick={() => generarImagen('inicio')}
                     disabled={generandoImagen !== null}
@@ -369,6 +382,10 @@ export default function AdminDashboard({
                       Post de apertura
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-3 pt-2">
+                      <div className="rounded-lg border border-border p-3 flex flex-col gap-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado automático · hoy</p>
+                        <CronStatus label="Programado: 10:30 hs · días hábiles" ok={xAperturaPosteadaHoy} okText="Publicado" />
+                      </div>
                       <Textarea
                         value={msgApertura}
                         onChange={e => setMsgApertura(e.target.value)}
@@ -405,6 +422,10 @@ export default function AdminDashboard({
                       Post de cierre
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-3 pt-2">
+                      <div className="rounded-lg border border-border p-3 flex flex-col gap-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estado automático · hoy</p>
+                        <CronStatus label="Programado: 17:00 hs · días hábiles" ok={xCierrePosteadoHoy} okText="Publicado" />
+                      </div>
                       <Textarea
                         value={msgCierre}
                         onChange={e => setMsgCierre(e.target.value)}
@@ -572,6 +593,22 @@ function TweetEmbed({ id }: { id: string }) {
   }, [id])
 
   return <div ref={ref} className="flex justify-center" />
+}
+
+function CronStatus({ label, ok, okText }: { label: string; ok: boolean; okText: string }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      {ok ? (
+        <span className="flex items-center gap-1 text-xs text-green-500 font-medium shrink-0">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          {okText}
+        </span>
+      ) : (
+        <span className="text-xs text-muted-foreground shrink-0">Pendiente</span>
+      )}
+    </div>
+  )
 }
 
 function AnimatedDots() {

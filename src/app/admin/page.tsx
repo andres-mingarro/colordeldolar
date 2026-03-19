@@ -53,6 +53,10 @@ export default async function AdminPage() {
       xPostCierre={cfg.x_post_cierre === 'true'}
       xMsgCierre={cfg.x_msg_cierre ?? DEFAULT_MSG_CIERRE}
       xUltimoTweetId={cfg.x_ultimo_tweet_id ?? ''}
+      xAperturaPosteadaHoy={cfg.x_apertura_posted === hoy}
+      xCierrePosteadoHoy={cfg.x_cierre_posted === hoy}
+      imagenAperturaGeneradaHoy={cfg.imagen_ultima_generacion === hoy}
+      imagenCierreGeneradaHoy={cfg.imagen_cierre_ultima_generacion === hoy}
       driveFolderUrl={`https://drive.google.com/drive/folders/${process.env.GOOGLE_DRIVE_FOLDER_ID}`}
     />
   )
