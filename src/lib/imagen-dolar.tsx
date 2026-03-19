@@ -36,7 +36,7 @@ export async function generarImagenDolar({ blue, oficial, fecha, tipo }: Params)
         style={{
           width: 1080,
           height: 1920,
-          background: tipo === 'inicio' ? '#00291b' : '#110000',
+          background: tipo === 'inicio' ? '#001810' : '#110000',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
