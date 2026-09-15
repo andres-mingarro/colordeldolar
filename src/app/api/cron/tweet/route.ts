@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { configuracion } from '@/db/schema'
-import { buildTweetText, postTweet } from '@/lib/twitter'
+import { buildTweetText, obtenerVariablesAyer, postTweet } from '@/lib/twitter'
 import { fechaHoyAR } from '@/lib/fecha'
 import { TIMEZONE } from '@/lib/market-hours'
 
@@ -77,6 +77,8 @@ export async function GET(req: NextRequest) {
   const time = ahora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
   const fecha = ahora.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
+  const ayerVars = tipo === 'apertura' ? await obtenerVariablesAyer(fechaHoy) : {}
+
   const texto = buildTweetText(template, {
     blueCompra: blue.compra,
     blueVenta: blue.venta,
@@ -92,6 +94,7 @@ export async function GET(req: NextRequest) {
     mayoristaVenta: mayorista?.venta ?? '',
     time,
     fecha,
+    ...ayerVars,
   })
 
   const tweetId = await postTweet(texto)

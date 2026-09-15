@@ -8,14 +8,6 @@
     {
       "path": "/api/cron/imagen?tipo=inicio",
       "schedule": "35 13 * * 1-5"
-    },
-    {
-      "path": "/api/cron/tweet?tipo=cierre",
-      "schedule": "0 20 * * 1-5"
-    },
-    {
-      "path": "/api/cron/imagen?tipo=final",
-      "schedule": "5 20 * * 1-5"
     }
   ]
 }
