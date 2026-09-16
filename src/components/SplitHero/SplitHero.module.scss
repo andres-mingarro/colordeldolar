@@ -1,0 +1,123 @@
+$lg: 1024px;
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: clamp(420px, 55vw, 640px);
+  overflow: hidden;
+  color: #fff;
+}
+
+.panelGreen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(155deg, #16a34a 0%, #0d5c2c 75%, #073b1c 100%);
+}
+
+.panelBlue {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(200deg, #2d56b2 0%, #1d3a80 70%, #10234f 100%);
+  clip-path: polygon(0% 0%, 60% 0%, 47% 50%, 60% 100%, 0% 100%);
+}
+
+.band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 6%;
+}
+
+.bandBlue {
+  left: 0;
+}
+
+.bandOficial {
+  right: 0;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.label {
+  font-size: clamp(13px, 1.4vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.num {
+  font-size: clamp(48px, 7vw, 100px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  font-size: clamp(13px, 1.2vw, 15px);
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-variant-numeric: tabular-nums;
+}
+
+.trend {
+  color: #fff;
+}
+
+// ─── Mobile: split apilado en vertical, diagonal simple ─────────────────
+@media (max-width: #{$lg - 1}) {
+  .stage {
+    height: 520px;
+  }
+
+  .panelBlue {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 40%, 0% 58%);
+  }
+
+  .band {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: auto;
+    width: auto;
+    padding: 0 7%;
+  }
+
+  .bandBlue {
+    // deja lugar al header transparente (~60px) superpuesto arriba
+    top: 76px;
+    bottom: auto;
+  }
+
+  .bandOficial {
+    bottom: 24px;
+    top: auto;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .num {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+}

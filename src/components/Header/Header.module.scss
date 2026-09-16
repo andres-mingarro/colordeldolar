@@ -35,3 +35,34 @@
   background: var(--border);
   opacity: 0.6;
 }
+
+.socialsWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+
+  @media (max-width: 1023px) {
+    display: none;
+  }
+}
+
+.transparent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  border-bottom: none;
+  background: transparent;
+
+  .logoWrap :global(svg) {
+    filter: brightness(0) invert(1);
+  }
+
+  .right {
+    --dimmer: rgba(255, 255, 255, 0.85);
+    --muted: #ffffff;
+    --border-subtle: rgba(255, 255, 255, 0.3);
+    --border: rgba(255, 255, 255, 0.4);
+  }
+}

@@ -1,12 +1,14 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import SplitHero from '@/components/SplitHero/SplitHero'
 import DolarValue from '@/components/DolarValue/dolar-value'
 import Inflacion from '@/components/Inflacion/Inflacion'
 import PollingStatus from '@/components/PollingStatus/PollingStatus'
 import Container from '@/components/Container/Container'
 import Card from '@/components/Card/Card'
 import Trend from '@/components/Trend/Trend'
+import { leerHomeDesign, type HomeDesign } from '@/components/DesignToggle/DesignToggle'
 import type { InflacionData } from '@/app/api/inflacion/route'
 import type { DolarSnapshot } from '@/db/schema'
 import { esMercadoAbierto, msHastaProximaApertura, FORCE_POLLING } from '@/lib/market-hours'
@@ -65,6 +67,16 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
   const [horaApertura, setHoraApertura] = useState('09:00')
   const [horaCierre, setHoraCierre] = useState('18:00')
   const [configCargada, setConfigCargada] = useState(false)
+  const [design, setDesign] = useState<HomeDesign>('nuevo')
+
+  useEffect(() => {
+    // Se lee recién después de hidratar: el SSR siempre renderiza 'nuevo'.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDesign(leerHomeDesign())
+    const onDesignChange = () => setDesign(leerHomeDesign())
+    window.addEventListener('home-design-change', onDesignChange)
+    return () => window.removeEventListener('home-design-change', onDesignChange)
+  }, [])
 
   const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -144,7 +156,16 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
   return (
     <>
       {cargando ? (
-        <p className="text-lg text-muted-foreground animate-pulse">Cargando valores...</p>
+        <p className="text-lg text-muted-foreground animate-pulse text-center">Cargando valores...</p>
+      ) : data && design === 'nuevo' ? (
+        <SplitHero
+          blueCompra={data.blue.compra}
+          blueVenta={data.blue.venta}
+          oficialCompra={data.oficial.compra}
+          oficialVenta={data.oficial.venta}
+          blueTendencia={tendencia.blue}
+          oficialTendencia={tendencia.oficial}
+        />
       ) : data ? (
         <Container tag="div" size="medium" className="row-value row-blue-oficial" classNameInner="flex flex-col lg:flex-row items-center gap-6 w-full">
           <DolarValue
@@ -163,10 +184,19 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
           />
         </Container>
       ) : (
-        <p className="text-destructive">Error al cargar los valores.</p>
+        <p className="text-destructive text-center">Error al cargar los valores.</p>
       )}
 
-      {data && (data.mep || data.tarjeta) && (
+      {data && design === 'nuevo' && (data.mep || data.tarjeta || data.ccl || data.mayorista) && (
+        <Container tag="div" size="medium" className="ticker-cotizaciones mt-8" classNameInner="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 w-full">
+          {data.mep && <TickerItem label="MEP" venta={data.mep.venta} tendencia={tendencia.mep} />}
+          {data.ccl && <TickerItem label="CCL" venta={data.ccl.venta} tendencia={tendencia.ccl} />}
+          {data.tarjeta && <TickerItem label="Tarjeta" venta={data.tarjeta.venta} tendencia={tendencia.tarjeta} />}
+          {data.mayorista && <TickerItem label="Mayorista" venta={data.mayorista.venta} tendencia={tendencia.mayorista} />}
+        </Container>
+      )}
+
+      {data && design === 'clasico' && (data.mep || data.tarjeta) && (
         <Container tag="div" size="medium" mb="small" className="row-value row-value-group row-mep-tarjeta" classNameInner="flex flex-col lg:flex-row gap-6 w-full">
           {data.mep && (
             <Card padding="small" className="dolar-mep flex flex-1 justify-center items-center gap-3">
@@ -181,7 +211,7 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
         </Container>
       )}
 
-      {data && (data.ccl || data.mayorista) && (
+      {data && design === 'clasico' && (data.ccl || data.mayorista) && (
         <Container tag="div" size="medium" className="row-value row-value-group row-ccl-mayorista" classNameInner="flex flex-col lg:flex-row gap-6 w-full">
           {data.ccl && (
             <Card padding="small" className="dolar-ccl flex flex-1 justify-center items-center gap-3">
@@ -211,9 +241,19 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
   )
 }
 
-function MiniCotizacion({ label, compra, venta, tendencia, className }: { label: string; compra: number; venta: number; tendencia: 'up' | 'down' | null; className?: string }) {
+function TickerItem({ label, venta, tendencia }: { label: string; venta: number; tendencia: 'up' | 'down' | null }) {
   return (
-    <div className={`flex flex-col items-center gap-1${className ? ` ${className}` : ''}`}>
+    <span className="flex items-center gap-2 text-sm">
+      <span className="text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>{label}</span>
+      <span className="font-bold tabular-nums" style={{ color: 'var(--fg)' }}>${venta.toLocaleString('es-AR')}</span>
+      <Trend valor={tendencia} />
+    </span>
+  )
+}
+
+function MiniCotizacion({ label, compra, venta, tendencia }: { label: string; compra: number; venta: number; tendencia: 'up' | 'down' | null }) {
+  return (
+    <div className="flex flex-col items-center gap-1">
       <span className="flex items-center gap-1 text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--muted)' }}>
         {label}
         <Trend valor={tendencia} />

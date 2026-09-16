@@ -57,6 +57,11 @@ export default function RootLayout({
             __html: `(function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);if(t==='dark')document.documentElement.classList.add('dark')})()`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var d=localStorage.getItem('home_design')==='clasico'?'clasico':'nuevo';document.documentElement.setAttribute('data-home-design',d)})()`,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} antialiased flex flex-col min-h-screen`}
