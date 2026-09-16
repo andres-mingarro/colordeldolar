@@ -55,7 +55,9 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
     ccl:       (snapshot?.tendenciaCcl       as 'up' | 'down' | null) ?? null,
     mayorista: (snapshot?.tendenciaMayorista as 'up' | 'down' | null) ?? null,
   })
-  const [ultimaActualizacion, setUltimaActualizacion] = useState<string>('')
+  const [ultimaActualizacion, setUltimaActualizacion] = useState<string>(() =>
+    initialData ? new Date().toLocaleTimeString('es-AR') : ''
+  )
   const [mercadoAbierto, setMercadoAbierto] = useState(false)
   const [cargando, setCargando] = useState(initialData === null)
   const [pollingActivo, setPollingActivo] = useState(true)
@@ -115,10 +117,6 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
   })
 
   useEffect(() => {
-    if (initialData) setUltimaActualizacion(new Date().toLocaleTimeString('es-AR'))
-  }, [initialData])
-
-  useEffect(() => {
     if (initialData === null) fetchDolar()
     fetch('/api/config')
       .then(r => r.json())
@@ -134,6 +132,9 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
 
   useEffect(() => {
     if (!configCargada) return
+    // iniciarPolling calcula mercadoAbierto en base a la hora actual: no se puede
+    // derivar en el render (dependería del reloj y rompería la hidratación SSR/CSR).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     iniciarPolling()
     return limpiarTimers
   }, [configCargada, iniciarPolling, limpiarTimers])

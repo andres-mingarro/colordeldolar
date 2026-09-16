@@ -71,12 +71,11 @@ export default function AdminDashboard({
   const router = useRouter()
 
   const TABS = ['configuracion', 'instagram', 'x', 'cotizaciones']
-  const [tabActivo, setTabActivo] = useState('configuracion')
-
-  useEffect(() => {
+  const [tabActivo, setTabActivo] = useState(() => {
+    if (typeof window === 'undefined') return 'configuracion'
     const hash = window.location.hash.replace('#', '')
-    if (TABS.includes(hash)) setTabActivo(hash)
-  }, [])
+    return TABS.includes(hash) ? hash : 'configuracion'
+  })
 
   function cambiarTab(tab: string) {
     setTabActivo(tab)
@@ -566,6 +565,12 @@ export default function AdminDashboard({
   )
 }
 
+declare global {
+  interface Window {
+    twttr?: { widgets?: { load: (el?: HTMLElement) => void } }
+  }
+}
+
 function TweetEmbed({ id }: { id: string }) {
   const ref = React.useRef<HTMLDivElement>(null)
 
@@ -582,8 +587,8 @@ function TweetEmbed({ id }: { id: string }) {
     ref.current.appendChild(blockquote)
 
     // Cargar o re-renderizar el widget
-    if ((window as any).twttr?.widgets) {
-      (window as any).twttr.widgets.load(ref.current)
+    if (window.twttr?.widgets) {
+      window.twttr.widgets.load(ref.current)
     } else {
       const script = document.createElement('script')
       script.src = 'https://platform.twitter.com/widgets.js'

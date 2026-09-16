@@ -4,12 +4,16 @@ import { useEffect, useState } from 'react'
 import styles from './ThemeToggle.module.scss'
 
 export default function ThemeToggle({ style }: { style?: React.CSSProperties }) {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof document === 'undefined') return 'dark'
+    const t = document.documentElement.getAttribute('data-theme') as 'dark' | 'light' | null
+    return t ?? 'dark'
+  })
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const t = document.documentElement.getAttribute('data-theme') as 'dark' | 'light' | null
-    if (t) setTheme(t)
+    // Marca que ya estamos en el cliente (post-hidratación) para evitar mismatch SSR/CSR.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 

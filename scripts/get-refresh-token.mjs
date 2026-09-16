@@ -1,6 +1,5 @@
 import { google } from 'googleapis'
 import http from 'http'
-import { createInterface } from 'readline'
 import dotenv from 'dotenv'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
