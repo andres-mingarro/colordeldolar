@@ -155,6 +155,9 @@ export default function HomeClient({ initialData, inflacion, snapshot }: Props) 
 
   return (
     <>
+      <h1 className="sr-only">
+        Cotización del Dólar Blue y Dólar Oficial en Argentina Hoy en Tiempo Real
+      </h1>
       {cargando ? (
         <p className="text-lg text-muted-foreground animate-pulse text-center">Cargando valores...</p>
       ) : data && design === 'nuevo' ? (
